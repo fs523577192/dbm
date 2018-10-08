@@ -52,4 +52,15 @@ class OracleDialect: DbDialect {
             return "ZHS16CGB231280"
         }
     }
+
+    override fun toSQL(columnComment: ColumnComment): String {
+        val column = columnComment.column
+        val table = column.table
+        val schema = table.schema
+        return "COMMENT ON COLUMN %s%s%s.%s%s%s.%s%s%s IS '%s'".format(
+                getNameQuote(), schema.name, getNameQuote().
+                getNameQuote(), table.name, getNameQuote().
+                getNameQuote(), column.name, getNameQuote().
+                columnComment.comment.replace("'", "''"))
+    }
 }

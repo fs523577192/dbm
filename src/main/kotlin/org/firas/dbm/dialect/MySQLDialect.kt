@@ -52,4 +52,15 @@ class MySQLDialect private constructor(): DbDialect {
             return "gb2312"
         }
     }
+
+    override fun toSQL(columnComment: ColumnComment): String {
+        val column = columnComment.column
+        val table = column.table
+        val schema = table.schema
+        return "ALTER TABLE %s%s%s.%s%s%s MODIFY COLUMN %s%s%s COMMENT '%s'".format(
+                getNameQuote(), schema.name, getNameQuote().
+                getNameQuote(), table.name, getNameQuote().
+                getNameQuote(), column.name, getNameQuote().
+                columnComment.comment.replace("'", "''"))
+    }
 }

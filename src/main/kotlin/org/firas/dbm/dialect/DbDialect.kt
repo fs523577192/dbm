@@ -23,4 +23,6 @@ interface DbDialect {
     fun getNameQuote(): String
 
     fun getCharset(): DbCharset
+
+    fun toSQL(columnComment: ColumnComment): String
 }

@@ -12,7 +12,7 @@ import java.util.Date
  * @version 1.0.0
  * @since 1.0.0
  */
-class DateTimeType(val fractianal: Int = 0): DbType {
+class DateTimeType(val fractional: Int = 0): DbType {
 
     override fun getKotlinType(): KClass<*> {
         return Date::class

@@ -1,6 +1,8 @@
 package org.firas.dbm.dialect
 
-import org.firas.dbm.type.DbType
+import org.firas.dbm.bo.Column
+import org.firas.dbm.domain.ColumnComment
+import org.firas.dbm.type.*
 
 /**
  * Oracle数据库方言
@@ -15,10 +17,6 @@ class OracleDialect: DbDialect {
 
     companion object {
         val instance = OracleDialect()
-    }
-
-    override fun getJdbcType(dbType: DbType): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun validateQuery(): String {
@@ -53,14 +51,58 @@ class OracleDialect: DbDialect {
         }
     }
 
+    override fun toSQL(dbType: DbType): String {
+        if (dbType is VarcharType) {
+            return "VARCHAR2(" + dbType.length + ')'
+        }
+        if (dbType is DecimalType) {
+            return "NUMBER(" + dbType.precision + ", " +
+                    dbType.scale + ')'
+        }
+        if (dbType is IntegerType) {
+            return "INT"
+        }
+        if (dbType is BigIntType) {
+            return "BIGINT"
+        }
+        if (dbType is DateTimeType) {
+            return "DATE(" + dbType.fractional + ')'
+        }
+        if (dbType is DoubleType) {
+            return "BINARY_DOUBLE"
+        }
+        if (dbType is FloatType) {
+            return "BINARY_FLOAT"
+        }
+        if (dbType is ClobType) {
+            return "CLOB"
+        }
+        if (dbType is BlobType) {
+            return "BLOB"
+        }
+        throw IllegalArgumentException("不支持的数据类型：" +
+                dbType.javaClass.name)
+    }
+
+    override fun toSQL(column: Column): String {
+        val dbType = column.dbType
+        return "%s%s%s %s %sNULL DEFAULT %s %s".format(
+                getNameQuote(), column.name, getNameQuote(),
+                toSQL(dbType),
+                if (column.nullable) "" else "NOT ",
+                column.defaultValue,
+                if (null == column.onUpdateValue) "" else "ON UPDATE %s".format(column.onUpdateValue)
+        )
+    }
+
     override fun toSQL(columnComment: ColumnComment): String {
         val column = columnComment.column
         val table = column.table
-        val schema = table.schema
+        val schema = table!!.schema
         return "COMMENT ON COLUMN %s%s%s.%s%s%s.%s%s%s IS '%s'".format(
-                getNameQuote(), schema.name, getNameQuote().
-                getNameQuote(), table.name, getNameQuote().
-                getNameQuote(), column.name, getNameQuote().
+                getNameQuote(), schema!!.name, getNameQuote(),
+                getNameQuote(), table.name, getNameQuote(),
+                getNameQuote(), column.name, getNameQuote(),
                 columnComment.comment.replace("'", "''"))
     }
 }

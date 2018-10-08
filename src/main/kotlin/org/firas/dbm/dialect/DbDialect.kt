@@ -1,5 +1,7 @@
 package org.firas.dbm.dialect
 
+import org.firas.dbm.bo.Column
+import org.firas.dbm.domain.ColumnComment
 import org.firas.dbm.type.DbType
 
 /**
@@ -13,8 +15,6 @@ import org.firas.dbm.type.DbType
  */
 interface DbDialect {
 
-    fun getJdbcType(dbType: DbType): String
-
     /**
      * @return 用来检查数据库连接是否有效的查询SQL
      */
@@ -23,6 +23,10 @@ interface DbDialect {
     fun getNameQuote(): String
 
     fun getCharset(): DbCharset
+
+    fun toSQL(dbType: DbType): String
+
+    fun toSQL(column: Column): String
 
     fun toSQL(columnComment: ColumnComment): String
 }

@@ -12,5 +12,7 @@ import org.firas.dbm.type.DbType
  * @since 1.0.0
  */
 data class Column(val dbType: DbType, val name: String,
-                  val nullable: Boolean = true, val defaultValue: Any? = null,
+                  val nullable: Boolean = true,
+                  val defaultValue: String = "NULL",
+                  val onUpdateValue: String? = null,
                   val comment: String = "", var table: Table? = null)

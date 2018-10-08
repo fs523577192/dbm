@@ -26,6 +26,9 @@
             <basic name="port">
                 <column name="port" />
             </basic>
+            <basic name="attributes">
+                <column name="attributes" length="200"/>
+            </basic>
             <one-to-many name="schemaCollection" fetch="LAZY" mapped-by="database"/>
         </attributes>
     </entity>
@@ -61,6 +64,9 @@
             <basic name="status">
                 <column name="status" length="1"/>
             </basic>
+            <basic name="attributes">
+                <column name="attributes" length="200"/>
+            </basic>
             <many-to-one name="schema" fetch="LAZY">
                 <join-column name="schema_id"/>
             </many-to-one>
@@ -93,6 +99,9 @@
             </basic>
             <basic name="defaultValue">
                 <column name="default_value" length="200"/>
+            </basic>
+            <basic name="onUpdateValue">
+                <column name="on_update_value" length="200"/>
             </basic>
             <basic name="createTime">
                 <column name="create_time"/>

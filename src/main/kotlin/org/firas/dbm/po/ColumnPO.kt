@@ -21,6 +21,7 @@ data class ColumnPO(var recId: String? = null,
                     var dbType: String? = null,
                     var nullable: Boolean? = null,
                     var defaultValue: String? = null,
+                    var onUpdateValue: String? = null,
                     var createTime: Date? = null,
                     var table: TablePO? = null) {
 

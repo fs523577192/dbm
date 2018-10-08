@@ -17,17 +17,17 @@ import org.firas.dbm.dialect.MySQLDialect
  * @version 1.0.0
  * @since 1.0.0
  */
-data class DatabasePO(var id: String? = null,
-                      var dialect: String? = null,
+data class DatabasePO(var recId: String? = null,
+                      var dbDialect: String? = null,
                       var name: String? = null,
                       var attributes: String = "{}",
-                      var schemaList: List<SchemaPO>? = null,
+                      var schemaCollection: Collection<SchemaPO>? = null,
                       var host: String? = null,
                       var port: Int? = null) {
 
     fun toBO(): Database {
         val objectMapper = ObjectMapper()
-        return Database(if ("oracle".equals(dialect, true)) OracleDialect.instance else MySQLDialect.instance,
+        return Database(if ("oracle".equals(dbDialect, true)) OracleDialect.instance else MySQLDialect.instance,
                 name!!, objectMapper.readValue(attributes, Map::class.java) as Map<String, Any>,
                 null, host, port)
     }

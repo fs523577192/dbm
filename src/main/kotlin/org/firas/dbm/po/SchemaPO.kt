@@ -15,10 +15,10 @@ import org.firas.dbm.bo.Schema
  * @version 1.0.0
  * @since 1.0.0
  */
-data class SchemaPO(var id: String? = null,
+data class SchemaPO(var recId: String? = null,
                     var name: String? = null,
                     var database: DatabasePO? = null,
-                    var tableList: List<TablePO>? = null) {
+                    var tableCollection: Collection<TablePO>? = null) {
 
     fun toBO(): Schema {
         return Schema(name!!, null, null)

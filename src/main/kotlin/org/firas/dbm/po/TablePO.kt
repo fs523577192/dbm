@@ -2,6 +2,7 @@ package org.firas.dbm.po
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.firas.dbm.bo.Table
+import java.util.*
 
 /**
  * <b><code></code></b>
@@ -15,11 +16,13 @@ import org.firas.dbm.bo.Table
  * @version 1.0.0
  * @since 1.0.0
  */
-data class TablePO(var id: String? = null,
+data class TablePO(var recId: String? = null,
+                   var status: String? = null,
                    var name: String? = null,
                    var comment: String? = null,
                    var attributes: String = "{}",
                    var schema: SchemaPO? = null,
+                   var createTime: Date? = null,
                    var columnList: List<ColumnPO>? = null) {
 
     fun toBO(): Table {

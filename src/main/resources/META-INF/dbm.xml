@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
+                 http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
+                 version="1.0">
+    <description>数据库管理需要的实体</description>
+
+    <package>org.firas.dbm.po</package>
+
+    <entity class="DatabasePO" name="DatabasePO">
+        <table name="info_database"/>
+        <attributes>
+            <id name="recId">
+                <column name="rec_id" length="32"/>
+            </id>
+            <basic name="name">
+                <column name="name" length="32"/>
+            </basic>
+            <basic name="dbDialect">
+                <column name="db_dialect" length="10"/>
+            </basic>
+            <basic name="host">
+                <column name="host" length="32"/>
+            </basic>
+            <basic name="port">
+                <column name="port" />
+            </basic>
+            <one-to-many name="schemaCollection" fetch="LAZY" mapped-by="database"/>
+        </attributes>
+    </entity>
+
+    <entity class="SchemaPO" name="SchemaPO">
+        <table name="info_schema"/>
+        <attributes>
+            <id name="recId">
+                <column name="rec_id" length="32"/>
+            </id>
+            <basic name="name">
+                <column name="name" length="32"/>
+            </basic>
+            <many-to-one name="database" fetch="LAZY">
+                <join-column name="database_id"/>
+            </many-to-one>
+            <one-to-many name="tableCollection" fetch="LAZY" mapped-by="schema"/>
+        </attributes>
+    </entity>
+
+    <entity class="TablePO" name="TablePO">
+        <table name="info_table"/>
+        <attributes>
+            <id name="recId">
+                <column name="rec_id" length="32"/>
+            </id>
+            <basic name="name">
+                <column name="name" length="32"/>
+            </basic>
+            <basic name="comment">
+                <column name="comment" length="200"/>
+            </basic>
+            <basic name="status">
+                <column name="status" length="1"/>
+            </basic>
+            <many-to-one name="schema" fetch="LAZY">
+                <join-column name="schema_id"/>
+            </many-to-one>
+            <one-to-many name="columnList" fetch="LAZY" mapped-by="table">
+                <order-by>createTime</order-by>
+            </one-to-many>
+        </attributes>
+    </entity>
+
+    <entity class="ColumnPO" name="ColumnPO">
+        <table name="info_column"/>
+        <attributes>
+            <id name="recId">
+                <column name="rec_id" length="32"/>
+            </id>
+            <basic name="name">
+                <column name="name" length="32"/>
+            </basic>
+            <basic name="comment">
+                <column name="comment" length="200"/>
+            </basic>
+            <basic name="status">
+                <column name="status" length="1"/>
+            </basic>
+            <basic name="dbType">
+                <column name="db_type" length="200"/>
+            </basic>
+            <basic name="nullable">
+                <column name="nullable"/>
+            </basic>
+            <basic name="defaultValue">
+                <column name="default_value" length="200"/>
+            </basic>
+            <basic name="createTime">
+                <column name="create_time"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+            <many-to-one name="table" fetch="LAZY">
+                <join-column name="table_id"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+</entity-mappings>

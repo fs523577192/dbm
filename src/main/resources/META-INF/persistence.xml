@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+             http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+
+    <!--
+         Name属性用于定义持久化单元的名字 (name必选,空值也合法);
+         transaction-type 指定事务类型(可选)
+    -->
+    <persistence-unit name="dbmsUnit" transaction-type="RESOURCE_LOCAL">
+
+        <!-- 显式列出实体类,在Java SE 环境中应该显式列出.(可选) -->
+        <mapping-file>META-INF/dbm.xml</mapping-file>
+
+        <class>org.firas.dbm.po.DatabasePO</class>
+        <class>org.firas.dbm.po.SchemaPO</class>
+
+        <!-- 声明是否扫描jar文件中标注了@Enity类加入到上下文.若不扫描,则如下:(可选) -->
+        <exclude-unlisted-classes/>
+    </persistence-unit>
+</persistence>

@@ -1,7 +1,7 @@
 package org.firas.dbm.dialect
 
-import org.firas.dbm.bo.Column
 import org.firas.dbm.domain.ColumnComment
+import org.firas.dbm.domain.ColumnRename
 import org.firas.dbm.type.*
 
 /**
@@ -13,7 +13,7 @@ import org.firas.dbm.type.*
  * @version 1.0.0
  * @since 1.0.0
  */
-class OracleDialect: DbDialect {
+class OracleDialect: DbDialect() {
 
     companion object {
         val instance = OracleDialect()
@@ -84,17 +84,6 @@ class OracleDialect: DbDialect {
                 dbType.javaClass.name)
     }
 
-    override fun toSQL(column: Column): String {
-        val dbType = column.dbType
-        return "%s%s%s %s %sNULL DEFAULT %s %s".format(
-                getNameQuote(), column.name, getNameQuote(),
-                toSQL(dbType),
-                if (column.nullable) "" else "NOT ",
-                column.defaultValue,
-                if (null == column.onUpdateValue) "" else "ON UPDATE %s".format(column.onUpdateValue)
-        )
-    }
-
     override fun toSQL(columnComment: ColumnComment): String {
         val column = columnComment.column
         val table = column.table
@@ -104,5 +93,17 @@ class OracleDialect: DbDialect {
                 getNameQuote(), table.name, getNameQuote(),
                 getNameQuote(), column.name, getNameQuote(),
                 columnComment.comment.replace("'", "''"))
+    }
+
+    override fun toSQL(columnRename: ColumnRename): String {
+        val column = columnRename.column
+        val table = column.table
+        val schema = table!!.schema
+        return "ALTER TABLE %s%s%s.%s%s%s RENAME COLUMN %s%s%s TO %s%s%s".format(
+                getNameQuote(), schema!!.name, getNameQuote(),
+                getNameQuote(), table.name, getNameQuote(),
+                getNameQuote(), column.name, getNameQuote(),
+                getNameQuote(), columnRename.newName, getNameQuote()
+        )
     }
 }

@@ -4,10 +4,7 @@ import org.firas.dbm.bo.Column
 import org.firas.dbm.type.DbType
 
 /**
- * <b><code></code></b>
- * <p/>
- *
- * <p/>
+ * 修改数据库列
  *
  * <b>Creation Time:</b> 2018年10月08日
  *
@@ -16,4 +13,5 @@ import org.firas.dbm.type.DbType
  * @since 1.0.0
  */
 data class ColumnModification(val column: Column, val dbType: DbType,
-                              val nullable: Boolean, val defaultValue: String?)
+                              val nullable: Boolean, val defaultValue: String,
+                              val onUpdateValue: String?)

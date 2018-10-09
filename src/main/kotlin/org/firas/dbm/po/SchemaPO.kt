@@ -1,7 +1,9 @@
 package org.firas.dbm.po
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import org.firas.common.util.hashMapSizeFor
+import org.firas.dbm.bo.Database
 import org.firas.dbm.bo.Schema
+import org.firas.dbm.bo.Table
 
 /**
  * <b><code></code></b>
@@ -21,6 +23,24 @@ data class SchemaPO(var recId: String? = null,
                     var tableCollection: Collection<TablePO>? = null) {
 
     fun toBO(): Schema {
-        return Schema(name!!, null, null)
+        return toBO(this.database?.toBO())
+    }
+
+    internal fun toBO(database: Database?): Schema {
+        val schema = Schema(name!!, database)
+        val tableCollection = this.tableCollection
+        if (null != tableCollection) {
+            val hashMap = HashMap<String, Table>(hashMapSizeFor(tableCollection.size))
+            tableCollection.forEach { table -> hashMap.put(table.name!!, table.toBO(schema)) }
+            schema.tableMap = hashMap
+        }
+        if (null != database) {
+            val hashMap = HashMap<String, Schema>(hashMapSizeFor(
+                    database.schemaMap.size + 1))
+            hashMap.put(schema.name, schema)
+            hashMap.putAll(database.schemaMap)
+            database.schemaMap = hashMap
+        }
+        return schema
     }
 }

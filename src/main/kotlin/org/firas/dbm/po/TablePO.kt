@@ -1,8 +1,13 @@
 package org.firas.dbm.po
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.firas.dbm.bo.Column
+import org.firas.dbm.bo.Schema
 import org.firas.dbm.bo.Table
 import java.util.*
+import java.util.function.BiConsumer
+import java.util.function.Supplier
+import kotlin.collections.LinkedHashMap
 
 /**
  * <b><code></code></b>
@@ -26,8 +31,19 @@ data class TablePO(var recId: String? = null,
                    var columnList: List<ColumnPO>? = null) {
 
     fun toBO(): Table {
+        return toBO(this.schema?.toBO())
+    }
+
+    internal fun toBO(schema: Schema?): Table {
         val objectMapper = ObjectMapper()
-        return Table(name!!, comment!!, null,
-                objectMapper.readValue(attributes, Map::class.java) as Map<String, Any>, null)
+        val columnList = this.columnList
+        val table = Table(name!!, comment!!, schema,
+                objectMapper.readValue(attributes, Map::class.java) as Map<String, Any>,
+                LinkedHashMap(), LinkedList())
+
+        if (null != columnList) {
+            columnList.forEach { column -> table.columnMap.put(column.name!!, column.toBO(table)) }
+        }
+        return table
     }
 }

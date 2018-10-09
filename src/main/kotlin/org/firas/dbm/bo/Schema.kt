@@ -1,5 +1,7 @@
 package org.firas.dbm.bo
 
+import java.util.*
+
 /**
  * 数据库schema
  *
@@ -9,5 +11,17 @@ package org.firas.dbm.bo
  * @version 1.0.0
  * @since 1.0.0
  */
-data class Schema(val name: String, var database: Database? = null,
-                  var tableMap: Map<String, Table>? = null)
+class Schema(val name: String, var database: Database? = null,
+                  var tableMap: Map<String, Table>? = null) {
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Schema) {
+            return false
+        }
+        return name.equals(other.name) && Objects.equals(database, other.database)
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode() + Objects.hashCode(database) * 97
+    }
+}

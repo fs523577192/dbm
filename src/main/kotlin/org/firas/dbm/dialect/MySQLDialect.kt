@@ -2,6 +2,7 @@ package org.firas.dbm.dialect
 
 import org.firas.dbm.bo.Column
 import org.firas.dbm.domain.ColumnComment
+import org.firas.dbm.domain.ColumnRename
 import org.firas.dbm.type.*
 
 /**
@@ -13,7 +14,7 @@ import org.firas.dbm.type.*
  * @version 1.0.0
  * @since 1.0.0
  */
-class MySQLDialect private constructor(): DbDialect {
+class MySQLDialect private constructor(): DbDialect() {
 
     companion object {
         val instance = MySQLDialect()
@@ -86,13 +87,8 @@ class MySQLDialect private constructor(): DbDialect {
     }
 
     override fun toSQL(column: Column): String {
-        val dbType = column.dbType
-        return "%s%s%s %s %sNULL DEFAULT %s %sCOMMENT '%s'".format(
-                getNameQuote(), column.name, getNameQuote(),
-                toSQL(dbType),
-                if (column.nullable) "" else "NOT ",
-                column.defaultValue,
-                if (null == column.onUpdateValue) "" else "ON UPDATE %s ".format(column.onUpdateValue),
+        return "%s COMMENT '%s'".format(
+                super.toSQL(column),
                 column.comment.replace("'", "''")
         )
     }
@@ -106,6 +102,19 @@ class MySQLDialect private constructor(): DbDialect {
         return "ALTER TABLE %s%s%s.%s%s%s MODIFY COLUMN %s".format(
                 getNameQuote(), schema!!.name, getNameQuote(),
                 getNameQuote(), table.name, getNameQuote(),
+                toSQL(newColumn))
+    }
+
+    override fun toSQL(columnRename: ColumnRename): String {
+        val column = columnRename.column
+        val newColumn = Column(column.dbType, columnRename.newName, column.nullable,
+                column.defaultValue, column.onUpdateValue, column.comment)
+        val table = column.table
+        val schema = table!!.schema
+        return "ALTER TABLE %s%s%s.%s%s%s CHANGE COLUMN %s%s%s %s".format(
+                getNameQuote(), schema!!.name, getNameQuote(),
+                getNameQuote(), table.name, getNameQuote(),
+                getNameQuote(), column.name, getNameQuote(),
                 toSQL(newColumn))
     }
 }

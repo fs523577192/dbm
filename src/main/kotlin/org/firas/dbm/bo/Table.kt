@@ -1,5 +1,8 @@
 package org.firas.dbm.bo
 
+import java.util.*
+import kotlin.collections.LinkedHashMap
+
 /**
  * 数据库表
  *
@@ -11,4 +14,13 @@ package org.firas.dbm.bo
  */
 data class Table(val name: String, val comment: String = "", var schema: Schema? = null,
                  val attributes: Map<String, Any> = HashMap(),
-                 var columnMap: LinkedHashMap<String, Column>? = null)
+                 var columnMap: LinkedHashMap<String, Column> = LinkedHashMap(),
+                 var indexList: List<Index> = ArrayList()) {
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Table) {
+            return false
+        }
+        return name.equals(other.name) && Objects.equals(schema, other.schema)
+    }
+}

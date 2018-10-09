@@ -3,10 +3,7 @@ package org.firas.dbm.domain
 import org.firas.dbm.bo.Column
 
 /**
- * <b><code></code></b>
- * <p/>
- *
- * <p/>
+ * 重命名数据库列
  *
  * <b>Creation Time:</b> 2018年10月08日
  *

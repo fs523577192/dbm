@@ -3,10 +3,7 @@ package org.firas.dbm.domain
 import org.firas.dbm.bo.Table
 
 /**
- * <b><code></code></b>
- * <p/>
- *
- * <p/>
+ * 创建数据库表
  *
  * <b>Creation Time:</b> 2018年10月08日
  *
@@ -14,4 +11,4 @@ import org.firas.dbm.bo.Table
  * @version 1.0.0
  * @since 1.0.0
  */
-data class TableAddition(val table: Table)
+data class TableCreation(val table: Table, val ifNotExists: Boolean = false)

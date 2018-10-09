@@ -1,5 +1,8 @@
 package org.firas.dbm.po
 
+import org.firas.dbm.bo.Column
+import org.firas.dbm.bo.Table
+import org.firas.dbm.type.toDbType
 import java.util.*
 
 /**
@@ -25,4 +28,12 @@ data class ColumnPO(var recId: String? = null,
                     var createTime: Date? = null,
                     var table: TablePO? = null) {
 
+    fun toBO(): Column {
+        return toBO(this.table?.toBO())
+    }
+
+    internal fun toBO(table: Table?): Column {
+        return Column(toDbType(this.dbType!!), this.name!!, this.nullable!!,
+                this.defaultValue!!, this.onUpdateValue!!, this.comment!!, table)
+    }
 }

@@ -5,6 +5,7 @@ import org.firas.dbm.bo.Database
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.dialect.OracleDialect
 import org.firas.dbm.dialect.MySQLDialect
+import org.firas.dbm.dto.DatabaseDTO
 import java.util.function.BiConsumer
 import java.util.function.Supplier
 
@@ -27,6 +28,34 @@ data class DatabasePO(var recId: String? = null,
                       var schemaCollection: Collection<SchemaPO>? = null,
                       var host: String? = null,
                       var port: Int? = null) {
+
+    constructor(database: Database): this(
+            null,
+            database.dbDialect.toString(),
+            database.name,
+            ObjectMapper().writeValueAsString(database.attributes),
+            null,
+            database.host,
+            database.port
+    )
+
+    constructor(database: DatabaseDTO): this(
+            database.recId,
+            database.dbDialect.toString(),
+            database.name,
+            ObjectMapper().writeValueAsString(database.attributes),
+            null,
+            database.host,
+            database.port
+    )
+
+    fun toDTO(): DatabaseDTO {
+        val objectMapper = ObjectMapper()
+        return DatabaseDTO(recId,
+                if ("oracle".equals(dbDialect, true)) OracleDialect.instance else MySQLDialect.instance,
+                name!!, objectMapper.readValue(attributes, Map::class.java) as Map<String, Any>,
+                host, port)
+    }
 
     fun toBO(): Database {
         val objectMapper = ObjectMapper()

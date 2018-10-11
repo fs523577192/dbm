@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
  * @version 1.0.0
  * @since 1.0.0
  */
-class BlobType(): DbType {
+class BlobType(): DbType() {
 
     override fun getKotlinType(): KClass<*> {
         return Int::class

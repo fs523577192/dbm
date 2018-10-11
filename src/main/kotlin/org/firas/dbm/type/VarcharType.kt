@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
  * @version 1.0.0
  * @since 1.0.0
  */
-class VarcharType(val length: Int, val charset: String): DbType {
+class VarcharType(val length: Int, val charset: String): DbType() {
 
     init {
         if (length <= 0) {

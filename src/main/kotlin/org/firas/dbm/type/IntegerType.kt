@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
  * @version 1.0.0
  * @since 1.0.0
  */
-class IntegerType(val unsigned: Boolean = false): DbType {
+class IntegerType(val unsigned: Boolean = false): DbType() {
 
     override fun getKotlinType(): KClass<*> {
         return Int::class

@@ -12,7 +12,7 @@ import java.util.*
  * @since 1.0.0
  */
 class Schema(val name: String, var database: Database? = null,
-                  var tableMap: Map<String, Table>? = null) {
+                  var tableMap: Map<String, Table> = HashMap()) {
 
     override fun equals(other: Any?): Boolean {
         if (other !is Schema) {

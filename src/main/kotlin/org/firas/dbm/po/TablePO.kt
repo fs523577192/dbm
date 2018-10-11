@@ -1,9 +1,12 @@
 package org.firas.dbm.po
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.firas.common.bo.CommonStatus
+import org.firas.common.util.hashMapSizeFor
 import org.firas.dbm.bo.Column
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.bo.Table
+import org.firas.dbm.dto.TableDTO
 import java.util.*
 import java.util.function.BiConsumer
 import java.util.function.Supplier
@@ -30,6 +33,23 @@ data class TablePO(var recId: String? = null,
                    var createTime: Date? = null,
                    var columnList: List<ColumnPO>? = null) {
 
+    constructor(table: Table): this(
+            null,
+            CommonStatus.NORMAL.toCode(),
+            table.name,
+            table.comment,
+            ObjectMapper().writeValueAsString(table.attributes),
+            if (null == table.schema) null else SchemaPO(table.schema!!)
+    )
+
+    constructor(table: TableDTO): this(
+            table.recId,
+            table.status,
+            table.name,
+            table.comment,
+            ObjectMapper().writeValueAsString(table.attributes)
+    )
+
     fun toBO(): Table {
         return toBO(this.schema?.toBO())
     }
@@ -43,6 +63,13 @@ data class TablePO(var recId: String? = null,
 
         if (null != columnList) {
             columnList.forEach { column -> table.columnMap.put(column.name!!, column.toBO(table)) }
+        }
+        if (null != schema) {
+            val hashMap = HashMap<String, Table>(
+                    hashMapSizeFor(schema.tableMap.size + 1))
+            hashMap.putAll(schema.tableMap)
+            hashMap.put(table.name, table)
+            schema.tableMap = hashMap
         }
         return table
     }

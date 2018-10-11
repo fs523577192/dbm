@@ -8,7 +8,7 @@
          Name属性用于定义持久化单元的名字 (name必选,空值也合法);
          transaction-type 指定事务类型(可选)
     -->
-    <persistence-unit name="dbmsUnit" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="dbmUnit" transaction-type="RESOURCE_LOCAL">
 
         <!-- 显式列出实体类,在Java SE 环境中应该显式列出.(可选) -->
         <mapping-file>META-INF/dbm.xml</mapping-file>
@@ -18,5 +18,13 @@
 
         <!-- 声明是否扫描jar文件中标注了@Enity类加入到上下文.若不扫描,则如下:(可选) -->
         <exclude-unlisted-classes/>
+        
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL57Dialect"/>
+            <property name="hibernate.dialect.storage_engine" value="innodb"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
     </persistence-unit>
 </persistence>

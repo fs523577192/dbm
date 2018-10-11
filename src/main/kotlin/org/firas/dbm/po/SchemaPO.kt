@@ -4,6 +4,7 @@ import org.firas.common.util.hashMapSizeFor
 import org.firas.dbm.bo.Database
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.bo.Table
+import org.firas.dbm.dto.SchemaDTO
 
 /**
  * <b><code></code></b>
@@ -21,6 +22,18 @@ data class SchemaPO(var recId: String? = null,
                     var name: String? = null,
                     var database: DatabasePO? = null,
                     var tableCollection: Collection<TablePO>? = null) {
+
+    constructor(schema: SchemaDTO): this(
+            schema.recId,
+            schema.name
+    )
+
+    constructor(schema: Schema): this(
+            null,
+            schema.name,
+            null,
+            null
+    )
 
     fun toBO(): Schema {
         return toBO(this.database?.toBO())

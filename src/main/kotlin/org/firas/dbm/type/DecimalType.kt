@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
  * @version 1.0.0
  * @since 1.0.0
  */
-class DecimalType(val precision: Int, val scale: Int): DbType {
+class DecimalType(val precision: Int, val scale: Int): DbType() {
 
     init {
         if (precision <= 0) {

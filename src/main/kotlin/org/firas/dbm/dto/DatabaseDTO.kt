@@ -1,5 +1,6 @@
 package org.firas.dbm.dto
 
+import org.firas.common.dto.DtoBase
 import org.firas.dbm.bo.Database
 import org.firas.dbm.dialect.DbDialect
 
@@ -17,9 +18,10 @@ import org.firas.dbm.dialect.DbDialect
  */
 class DatabaseDTO(val recId: String?, val dbDialect: DbDialect, val name: String,
                   val attributes: Map<String, Any> = HashMap(),
-                  var host: String? = null, var port: Int? = null) {
+                  var host: String? = null, var port: Int? = null):
+        DtoBase<Database> {
 
-    fun toBO(): Database {
+    override fun toBO(): Database {
         return Database(dbDialect, name, attributes, HashMap(), host, port)
     }
 }

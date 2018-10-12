@@ -1,5 +1,7 @@
 package org.firas.dbm.dto
 
+import org.firas.common.dto.DtoBase
+import org.firas.dbm.bo.Column
 import org.firas.dbm.type.DbType
 
 /**
@@ -22,5 +24,9 @@ class ColumnDTO(val recId: String? = null,
                 val nullable: Boolean = true,
                 val defaultValue: String = "NULL",
                 val onUpdateValue: String? = null,
-                val tableId: String? = null) {
+                val tableId: String? = null): DtoBase<Column> {
+
+    override fun toBO(): Column {
+        return Column(dbType, name, nullable, defaultValue, onUpdateValue, comment)
+    }
 }

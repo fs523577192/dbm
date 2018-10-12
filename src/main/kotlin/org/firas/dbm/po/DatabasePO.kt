@@ -1,6 +1,7 @@
 package org.firas.dbm.po
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.firas.common.po.PoBase
 import org.firas.dbm.bo.Database
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.dialect.OracleDialect
@@ -27,7 +28,7 @@ data class DatabasePO(var recId: String? = null,
                       var attributes: String = "{}",
                       var schemaCollection: Collection<SchemaPO>? = null,
                       var host: String? = null,
-                      var port: Int? = null) {
+                      var port: Int? = null): PoBase<Database, DatabaseDTO> {
 
     constructor(database: Database): this(
             null,
@@ -49,7 +50,7 @@ data class DatabasePO(var recId: String? = null,
             database.port
     )
 
-    fun toDTO(): DatabaseDTO {
+    override fun toDTO(): DatabaseDTO {
         val objectMapper = ObjectMapper()
         return DatabaseDTO(recId,
                 if ("oracle".equals(dbDialect, true)) OracleDialect.instance else MySQLDialect.instance,
@@ -57,7 +58,7 @@ data class DatabasePO(var recId: String? = null,
                 host, port)
     }
 
-    fun toBO(): Database {
+    override fun toBO(): Database {
         val objectMapper = ObjectMapper()
         val schemaCollection = this.schemaCollection
         return Database(if ("oracle".equals(dbDialect, true)) OracleDialect.instance else MySQLDialect.instance,

@@ -1,5 +1,6 @@
 package org.firas.dbm.po
 
+import org.firas.common.po.PoBase
 import org.firas.common.util.hashMapSizeFor
 import org.firas.dbm.bo.Database
 import org.firas.dbm.bo.Schema
@@ -21,7 +22,8 @@ import org.firas.dbm.dto.SchemaDTO
 data class SchemaPO(var recId: String? = null,
                     var name: String? = null,
                     var database: DatabasePO? = null,
-                    var tableCollection: Collection<TablePO>? = null) {
+                    var tableCollection: Collection<TablePO>? = null):
+        PoBase<Schema, SchemaDTO> {
 
     constructor(schema: SchemaDTO): this(
             schema.recId,
@@ -35,7 +37,7 @@ data class SchemaPO(var recId: String? = null,
             null
     )
 
-    fun toBO(): Schema {
+    override fun toBO(): Schema {
         return toBO(this.database?.toBO())
     }
 
@@ -55,5 +57,9 @@ data class SchemaPO(var recId: String? = null,
             database.schemaMap = hashMap
         }
         return schema
+    }
+
+    override fun toDTO(): SchemaDTO {
+        return SchemaDTO(recId, name!!, database?.recId)
     }
 }

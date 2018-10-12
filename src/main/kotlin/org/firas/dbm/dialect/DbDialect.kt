@@ -1,6 +1,7 @@
 package org.firas.dbm.dialect
 
 import org.firas.dbm.bo.Column
+import org.firas.dbm.bo.Schema
 import org.firas.dbm.domain.ColumnAddition
 import org.firas.dbm.domain.ColumnComment
 import org.firas.dbm.domain.ColumnDrop
@@ -99,4 +100,6 @@ abstract class DbDialect {
                 .joinToString(transform = {str -> str}))
                 .append(")").toString()
     }
+
+    abstract fun fetchInfo(schema: Schema, userName: String, password: String): Schema
 }

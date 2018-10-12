@@ -3,13 +3,10 @@ package org.firas.dbm.po
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.firas.common.bo.CommonStatus
 import org.firas.common.util.hashMapSizeFor
-import org.firas.dbm.bo.Column
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.bo.Table
 import org.firas.dbm.dto.TableDTO
 import java.util.*
-import java.util.function.BiConsumer
-import java.util.function.Supplier
 import kotlin.collections.LinkedHashMap
 
 /**
@@ -59,7 +56,7 @@ data class TablePO(var recId: String? = null,
         val columnList = this.columnList
         val table = Table(name!!, comment!!, schema,
                 objectMapper.readValue(attributes, Map::class.java) as Map<String, Any>,
-                LinkedHashMap(), LinkedList())
+                LinkedHashMap(), LinkedHashMap())
 
         if (null != columnList) {
             columnList.forEach { column -> table.columnMap.put(column.name!!, column.toBO(table)) }

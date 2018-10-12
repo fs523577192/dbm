@@ -15,7 +15,7 @@ import kotlin.collections.LinkedHashMap
 data class Table(val name: String, val comment: String = "", var schema: Schema? = null,
                  val attributes: Map<String, Any> = HashMap(),
                  var columnMap: LinkedHashMap<String, Column> = LinkedHashMap(),
-                 var indexList: List<Index> = ArrayList()) {
+                 var indexList: Map<String, Index> = HashMap()) {
 
     override fun equals(other: Any?): Boolean {
         if (other !is Table) {

@@ -13,9 +13,6 @@
         <!-- 显式列出实体类,在Java SE 环境中应该显式列出.(可选) -->
         <mapping-file>META-INF/dbm.xml</mapping-file>
 
-        <class>org.firas.dbm.po.DatabasePO</class>
-        <class>org.firas.dbm.po.SchemaPO</class>
-
         <!-- 声明是否扫描jar文件中标注了@Enity类加入到上下文.若不扫描,则如下:(可选) -->
         <exclude-unlisted-classes/>
         

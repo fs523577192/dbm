@@ -11,8 +11,10 @@ package org.firas.dbm.bo
  */
 data class Index(val type: IndexType, val name: String?, val columnList: List<Column>) {
 
+    var table: Table? = null
+
     init {
-        val table = columnList[0].table
+        table = columnList[0].table
         if (columnList.any { column -> !column.table!!.equals(table) }) {
             throw IllegalArgumentException("列不都在同一个表中")
         }

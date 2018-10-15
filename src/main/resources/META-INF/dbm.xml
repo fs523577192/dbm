@@ -112,4 +112,49 @@
             </many-to-one>
         </attributes>
     </entity>
+
+    <entity class="IndexPO" name="IndexPO">
+        <table name="info_index"/>
+        <attributes>
+            <id name="recId">
+                <column name="rec_id" length="32"/>
+            </id>
+            <basic name="name">
+                <column name="name" length="32"/>
+            </basic>
+            <basic name="status">
+                <column name="status" length="1"/>
+            </basic>
+            <basic name="createTime">
+                <column name="create_time"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+            <one-to-many name="columnList" fetch="LAZY" mapped-by="index">
+                <order-by>ordinal</order-by>
+            </one-to-many>
+            <transient name="table"/>
+        </attributes>
+    </entity>
+
+    <entity class="ColumnInIndexPO" name="ColumnInIndexPO">
+        <table name="info_index_column"/>
+        <id-class class="IndexColumnId"/>
+        <attributes>
+            <id name="indexId">
+                <column name="index_id" length="32" nullable="false"/>
+            </id>
+            <id name="columnId">
+                <column name="column_id" length="32" nullable="false"/>
+            </id>
+            <basic name="ordinal">
+                <column name="ordinal"/>
+            </basic>
+            <many-to-one name="index">
+                <join-column name="index_id" insertable="false" updatable="false"/>
+            </many-to-one>
+            <many-to-one name="column">
+                <join-column name="column_id" insertable="false" updatable="false"/>
+            </many-to-one>
+        </attributes>
+    </entity>
 </entity-mappings>

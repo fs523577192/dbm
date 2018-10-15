@@ -1,6 +1,7 @@
 package org.firas.dbm.dialect
 
 import org.firas.dbm.bo.Column
+import org.firas.dbm.bo.Database
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.domain.ColumnAddition
 import org.firas.dbm.domain.ColumnComment
@@ -9,6 +10,7 @@ import org.firas.dbm.domain.ColumnModification
 import org.firas.dbm.domain.ColumnRename
 import org.firas.dbm.domain.TableCreation
 import org.firas.dbm.type.DbType
+import java.sql.Connection
 import java.util.function.BiConsumer
 import java.util.function.Supplier
 
@@ -100,6 +102,8 @@ abstract class DbDialect {
                 .joinToString(transform = {str -> str}))
                 .append(")").toString()
     }
+
+    abstract fun getConnection(database: Database, userName: String, password: String): Connection
 
     abstract fun fetchInfo(schema: Schema, userName: String, password: String): Schema
 }

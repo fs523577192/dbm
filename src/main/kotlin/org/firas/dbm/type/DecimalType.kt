@@ -21,7 +21,7 @@ class DecimalType(val precision: Int, val scale: Int): DbType() {
         if (precision <= 0) {
             throw IllegalArgumentException("Decimal的precision必须是一个正整数：%d".format(precision))
         }
-        if (scale <= 0) {
+        if (scale < 0) {
             throw IllegalArgumentException("Decimal的scale必须是一个非负整数：%d".format(scale))
         }
     }

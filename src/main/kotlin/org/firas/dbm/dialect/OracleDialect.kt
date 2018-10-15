@@ -1,8 +1,18 @@
 package org.firas.dbm.dialect
 
+import org.firas.common.util.closeQuietly
+import org.firas.dbm.bo.Column
+import org.firas.dbm.bo.Database
+import org.firas.dbm.bo.Index
+import org.firas.dbm.bo.Schema
+import org.firas.dbm.bo.Table
 import org.firas.dbm.domain.ColumnComment
 import org.firas.dbm.domain.ColumnRename
 import org.firas.dbm.type.*
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.ResultSet
+import java.sql.Statement
 
 /**
  * Oracle数据库方言
@@ -60,10 +70,13 @@ class OracleDialect: DbDialect() {
                     dbType.scale + ')'
         }
         if (dbType is IntegerType) {
-            return "INT"
+            return "NUMBER(10, 0)"
         }
         if (dbType is BigIntType) {
-            return "BIGINT"
+            return "NUMBER(20, 0)"
+        }
+        if (dbType is SmallIntType) {
+            return "NUMBER(5, 0)"
         }
         if (dbType is DateTimeType) {
             return "DATE(" + dbType.fractional + ')'
@@ -105,5 +118,122 @@ class OracleDialect: DbDialect() {
                 getNameQuote(), column.name, getNameQuote(),
                 getNameQuote(), columnRename.newName, getNameQuote()
         )
+    }
+
+    override fun getConnection(database: Database, userName: String, password: String): Connection {
+        val host = database.host
+        val port = database.port
+        if (null == host) {
+            throw IllegalStateException("数据库地址为空")
+        }
+        if (null == port) {
+            throw IllegalStateException("数据库端口为空")
+        }
+        Class.forName("oracle.jdbc.driver.OracleDriver")
+        return DriverManager.getConnection(
+                "jdbc:oracle:thin:@%s:%d:%s".format(host, port, database.name),
+                userName, password)
+    }
+
+    override fun fetchInfo(schema: Schema, userName: String, password: String): Schema {
+        var connection: Connection? = null
+        try {
+            val tableMap = HashMap<String, Table>()
+            connection = getConnection(schema.database!!, userName, password)
+            val tableCommentMap = fetchTableComment(connection)
+            val tableColumnMap = fetchColumnInfo(connection)
+            val tableIndexMap = HashMap<String, MutableMap<String, Index>>()
+            tableCommentMap.forEach { tableName, comment ->
+                tableMap.put(tableName, Table(tableName, comment, schema,
+                        HashMap(), tableColumnMap.get(tableName)!!,
+                        tableIndexMap.computeIfAbsent(tableName, { HashMap() })
+                )) }
+            tableMap.values.forEach { table -> table.columnMap.values.forEach { it.table = table } }
+            return Schema(schema.name, schema.database, tableMap)
+        } finally {
+            closeQuietly(connection)
+        }
+    }
+
+    private fun fetchTableComment(connection: Connection): Map<String, String> {
+        val tableCommentMap = HashMap<String, String>()
+        var statement: Statement? = null
+        var resultSet: ResultSet? = null
+        try {
+            statement = connection.createStatement()
+            resultSet = statement.executeQuery("SELECT " +
+                    "a.table_name, b.comments FROM user_tables a " +
+                    "LEFT JOIN user_tab_comments b " +
+                    "ON a.table_name = b.table_name " +
+                    "WHERE a.duration IS NULL AND " +
+                    "(a.dropped IS NULL OR a.dropped = 'NO')")
+            while (resultSet.next()) {
+                tableCommentMap.put(resultSet.getString("table_name"),
+                        resultSet.getString("comments") ?: "")
+            }
+            return tableCommentMap
+        } finally {
+            closeQuietly(resultSet)
+            closeQuietly(statement)
+        }
+    }
+
+    private fun fetchColumnInfo(connection: Connection): Map<String, LinkedHashMap<String, Column>> {
+        val tableColumnMap = HashMap<String, LinkedHashMap<String, Column>>()
+        var statement: Statement? = null
+        var resultSet: ResultSet? = null
+        try {
+            statement = connection.createStatement()
+            resultSet = statement.executeQuery("SELECT a.table_name, " +
+                    "a.column_name, a.data_type, a.data_length, " +
+                    "a.data_precision, a.data_scale, a.nullable, " +
+                    "a.data_default, b.comments FROM user_tab_columns a " +
+                    "JOIN user_tables t " +
+                    "ON a.table_name = t.table_name AND " +
+                    "t.duration IS NULL AND " +
+                    "(t.dropped IS NULL OR t.dropped = 'NO') " +
+                    "LEFT JOIN user_col_comments b " +
+                    "ON a.table_name = b.table_name AND " +
+                    "a.column_name = b.column_name")
+            while (resultSet.next()) {
+                val tableName = resultSet.getString("table_name")
+                val columnName = resultSet.getString("column_name")
+                val dbType = toDbType(resultSet.getString("data_type"),
+                        resultSet.getInt("data_length"),
+                        resultSet.getInt("data_precision"),
+                        resultSet.getInt("data_scale"))
+                tableColumnMap.computeIfAbsent(tableName, { LinkedHashMap() })
+                        .put(columnName, Column(dbType, resultSet.getString("column_name"),
+                                "Y".equals(resultSet.getString("nullable"), true),
+                                "%s".format(resultSet.getString("data_default")),
+                                null, resultSet.getString("comments") ?: ""))
+            }
+        } finally {
+            closeQuietly(resultSet)
+            closeQuietly(statement)
+        }
+        return tableColumnMap
+    }
+
+    private fun toDbType(dataType: String, dataLength: Int,
+                         precision: Int, scale: Int): DbType {
+        return when (dataType) {
+            "NUMBER" -> when (scale) {
+                in Int.MIN_VALUE .. 0 -> when (if (precision <= 0) dataLength else precision) {
+                    in 1 .. 4 -> SmallIntType()
+                    in 5 .. 9 -> IntegerType()
+                    in 10 .. 18 -> BigIntType()
+                    else -> DecimalType(if (precision <= 0) dataLength else precision, 0)
+                }
+                else -> DecimalType(if (precision <= 0) dataLength else precision, scale)
+            }
+            "VARCHAR2", "VARCHAR" -> VarcharType(dataLength, getCharset().getUTF8())
+            "CLOB" -> ClobType()
+            "DATE" -> DateTimeType()
+            "BLOB" -> BlobType()
+            "BINARY_DOUBLE" -> DoubleType()
+            "BINARY_FLOAT" -> FloatType()
+            else -> throw Exception("Unsupported data type: %s".format(dataType))
+        }
     }
 }

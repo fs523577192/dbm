@@ -55,5 +55,6 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
     runtime group: 'mysql', name: 'mysql-connector-java', version: '5.1.47'
+    runtime group: 'com.hynnet', name: 'oracle-driver-ojdbc', version: '12.1.0.2'
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }

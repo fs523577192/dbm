@@ -2,6 +2,7 @@ package org.firas.dbm.dialect
 
 import org.firas.common.util.closeQuietly
 import org.firas.dbm.bo.Column
+import org.firas.dbm.bo.Database
 import org.firas.dbm.bo.Index
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.bo.Table
@@ -9,6 +10,7 @@ import org.firas.dbm.domain.ColumnComment
 import org.firas.dbm.domain.ColumnRename
 import org.firas.dbm.type.*
 import java.sql.Connection
+import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Statement
@@ -129,6 +131,21 @@ class MySQLDialect private constructor(): DbDialect() {
                 toSQL(newColumn))
     }
 
+    override fun getConnection(database: Database, userName: String, password: String): Connection {
+        val host = database.host
+        val port = database.port
+        if (null == host) {
+            throw IllegalStateException("数据库地址为空")
+        }
+        if (null == port) {
+            throw IllegalStateException("数据库端口为空")
+        }
+        Class.forName("com.mysql.jdbc.Driver")
+        return DriverManager.getConnection(
+                "jdbc:mysql//%s:%d/%s".format(host, port, database.name),
+                userName, password)
+    }
+
     override fun fetchInfo(schema: Schema, userName: String, password: String): Schema {
         var connection: Connection? = null
         var statement: PreparedStatement? = null
@@ -138,7 +155,7 @@ class MySQLDialect private constructor(): DbDialect() {
             val tableUnsignedColumnMap = HashMap<String, MutableSet<String>>()
             val tableColumnMap = HashMap<String, LinkedHashMap<String, Column>>()
             val tableIndexMap = HashMap<String, MutableMap<String, Index>>()
-            connection = schema.database!!.getConnection(userName, password)
+            connection = getConnection(schema.database!!, userName, password)
             try {
                 statement = connection.prepareStatement("SELECT " +
                         "`table_name`, `table_comment`, `engine`, `auto_increment`, `table_collation` " +
@@ -206,6 +223,7 @@ class MySQLDialect private constructor(): DbDialect() {
                     schema, attributes, tableColumnMap.computeIfAbsent(name, { LinkedHashMap() }),
                     tableIndexMap.computeIfAbsent(name, { HashMap() })))
         }
+        tableMap.values.forEach { table -> table.columnMap.values.forEach { it.table = table } }
     }
 
     private fun handleColumnInfo(schema: Schema, resultSet: ResultSet,
@@ -236,16 +254,16 @@ class MySQLDialect private constructor(): DbDialect() {
     }
 
     private fun toDbType(dataType: String, unsigned: Boolean,
-                         characterLength: Int?,
-                         precision: Int?, scale: Int?,
-                         dateTimePrecision: Int?,
+                         characterLength: Int,
+                         precision: Int, scale: Int,
+                         dateTimePrecision: Int,
                          charsetName: String?): DbType {
         return when (dataType) {
             "int" -> IntegerType(unsigned)
             "bigint" -> BigIntType(unsigned)
-            "decimal" -> DecimalType(precision!!, scale!!)
-            "varchar" -> VarcharType(characterLength!!, charsetName!!)
-            "datetime" -> DateTimeType(dateTimePrecision!!)
+            "decimal" -> DecimalType(precision, scale)
+            "varchar" -> VarcharType(characterLength, charsetName!!)
+            "datetime" -> DateTimeType(dateTimePrecision)
             "smallint" -> SmallIntType(unsigned)
             "double" -> DoubleType()
             "float" -> FloatType()

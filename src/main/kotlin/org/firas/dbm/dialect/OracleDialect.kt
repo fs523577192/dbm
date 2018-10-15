@@ -2,8 +2,10 @@ package org.firas.dbm.dialect
 
 import org.firas.common.util.closeQuietly
 import org.firas.dbm.bo.Column
+import org.firas.dbm.bo.ColumnInIndex
 import org.firas.dbm.bo.Database
 import org.firas.dbm.bo.Index
+import org.firas.dbm.bo.IndexType
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.bo.Table
 import org.firas.dbm.domain.ColumnComment
@@ -142,11 +144,11 @@ class OracleDialect: DbDialect() {
             connection = getConnection(schema.database!!, userName, password)
             val tableCommentMap = fetchTableComment(connection)
             val tableColumnMap = fetchColumnInfo(connection)
-            val tableIndexMap = HashMap<String, MutableMap<String, Index>>()
+            val tableIndexMap = fetchIndexInfo(connection, tableColumnMap)
             tableCommentMap.forEach { tableName, comment ->
                 tableMap.put(tableName, Table(tableName, comment, schema,
                         HashMap(), tableColumnMap.get(tableName)!!,
-                        tableIndexMap.computeIfAbsent(tableName, { HashMap() })
+                        tableIndexMap.getOrDefault(tableName, HashMap())
                 )) }
             tableMap.values.forEach { table -> table.columnMap.values.forEach { it.table = table } }
             return Schema(schema.name, schema.database, tableMap)
@@ -213,6 +215,62 @@ class OracleDialect: DbDialect() {
             closeQuietly(statement)
         }
         return tableColumnMap
+    }
+
+    private fun fetchIndexInfo(connection: Connection,
+                               tableColumnMap: Map<String, Map<String, Column>>):
+            Map<String, Map<String, Index>> {
+        val tableIndexMap = HashMap<String, HashMap<String, Index>>()
+        val temp = HashMap<String, HashMap<String, MutableList<ColumnInIndex>>>()
+        var statement: Statement? = null
+        var resultSet: ResultSet? = null
+        try {
+            statement = connection.createStatement()
+            resultSet = statement.executeQuery("SELECT a.table_name, " +
+                    "a.index_name, a.column_name, a.column_length, " +
+                    "a.descend, b.uniqueness, c.constraint_type " +
+                    "FROM user_ind_columns a " +
+                    "JOIN user_indexes b " +
+                    "ON a.table_name = b.table_name AND " +
+                    "a.index_name = b.index_name " +
+                    "JOIN user_tables t " +
+                    "ON a.table_name = t.table_name AND " +
+                    "t.duration IS NULL AND " +
+                    "(t.dropped IS NULL OR t.dropped = 'NO') " +
+                    "LEFT JOIN user_constraints c " +
+                    "ON c.table_name = a.table_name AND " +
+                    "c.index_name = a.index_name AND " +
+                    "c.status = 'ENABLED' " +
+                    "ORDER BY a.table_name, a.index_name, a.column_position")
+            while (resultSet.next()) {
+                val tableName = resultSet.getString("table_name")
+                val columnName = resultSet.getString("column_name")
+                val indexName = resultSet.getString("index_name")
+                val indexType = toIndexType(resultSet.getString("uniqueness"),
+                        resultSet.getString("constraint_type"))
+                val column = tableColumnMap.get(tableName)!!.get(columnName)!!
+                val index = tableIndexMap.computeIfAbsent(tableName){ HashMap() }
+                                .computeIfAbsent(indexName){ Index(indexType, indexName, null) }
+                val columnInIndex = ColumnInIndex(index, column,
+                        resultSet.getInt("column_length"))
+                temp.computeIfAbsent(tableName, { HashMap() })
+                        .computeIfAbsent(indexName, { ArrayList() })
+                        .add(columnInIndex)
+            }
+            tableIndexMap.forEach { tableName, map ->
+                map.forEach { indexName, index ->
+                    index.columnList = temp.get(tableName)!!.get(indexName) } }
+        } finally {
+            closeQuietly(resultSet)
+            closeQuietly(statement)
+        }
+        return tableIndexMap
+    }
+
+    private fun toIndexType(uniqueness: String?, constraintType: String?): IndexType {
+        return if ("P".equals(constraintType, true)) IndexType.PRIMARY
+        else if ("UNIQUE".equals(uniqueness, true)) IndexType.UNIQUE
+        else IndexType.NORMAL
     }
 
     private fun toDbType(dataType: String, dataLength: Int,

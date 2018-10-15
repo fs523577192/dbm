@@ -3,6 +3,7 @@ package org.firas.dbm.po
 import org.firas.common.po.PoBase
 import org.firas.dbm.bo.Index
 import org.firas.dbm.bo.IndexType
+import org.firas.dbm.bo.Table
 import org.firas.dbm.dto.IndexDTO
 import java.util.*
 import java.util.stream.Collectors
@@ -32,9 +33,13 @@ class IndexPO(var recId: String? = null,
     }
 
     override fun toBO(): Index {
-        val table = this.table?.toBO()
+        return toBO(null)
+    }
+
+    fun toBO(table: Table?): Index {
+        val table = table ?: this.table?.toBO()
         val columnList = this.columnList?.stream()
-                ?.map { it.column!!.toBO(table) }
+                ?.map { it.toBO(table) }
                 ?.collect(Collectors.toList())
         return Index(IndexType.values().get(indexType), name,
                 columnList ?: ArrayList(1))

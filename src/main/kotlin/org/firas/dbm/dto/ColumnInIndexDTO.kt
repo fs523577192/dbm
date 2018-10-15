@@ -13,5 +13,5 @@ package org.firas.dbm.dto
  * @since 1.0.0
  */
 class ColumnInIndexDTO(val indexId: String, val columnId: String,
-                       val ordinal: Int = 0) {
+                       val ordinal: Int = 0, var length: Int? = null) {
 }

@@ -1,10 +1,12 @@
 package org.firas.dbm.po
 
+import org.firas.dbm.bo.ColumnInIndex
+import org.firas.dbm.bo.Table
 import org.firas.dbm.dto.ColumnInIndexDTO
 import java.util.*
 
 /**
- * Many to many relation between columns and indice
+ * Many to many relation between columns and indexes
  *
  * <b>Creation Time:</b> 2018年10月15日
  *
@@ -13,7 +15,7 @@ import java.util.*
  * @since 1.0.0
  */
 class ColumnInIndexPO(index: IndexPO? = null, column: ColumnPO? = null,
-                      var ordinal: Int = 0) {
+                      var ordinal: Int = 0, var length: Int? = null) {
 
     var indexId: String? = index?.recId
         set(value) {
@@ -45,5 +47,9 @@ class ColumnInIndexPO(index: IndexPO? = null, column: ColumnPO? = null,
 
     fun toDTO(): ColumnInIndexDTO {
         return ColumnInIndexDTO(index!!.recId!!, column!!.recId!!, ordinal)
+    }
+
+    fun toBO(table: Table?): ColumnInIndex {
+        return ColumnInIndex(index!!.toBO(table), column!!.toBO(table), length)
     }
 }

@@ -1,7 +1,8 @@
 package org.firas.dbm.dao
 
 import org.firas.common.dao.DaoBase
-import org.firas.dbm.po.IndexPO
+import org.firas.dbm.po.ColumnInIndexPO
+import org.firas.dbm.po.IndexColumnId
 import org.springframework.stereotype.Repository
 
 /**
@@ -10,11 +11,11 @@ import org.springframework.stereotype.Repository
  *
  * <p/>
  *
- * <b>Creation Time:</b> 2018年10月15日
+ * <b>Creation Time:</b> 2018年10月16日
  *
  * @author Wu Yuping
  * @version 1.0.0
  * @since 1.0.0
  */
 @Repository
-interface IndexDAO: DaoBase<IndexPO, String>
+interface ColumnInIndexDAO: DaoBase<ColumnInIndexPO, IndexColumnId>

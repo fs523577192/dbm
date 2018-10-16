@@ -1,5 +1,6 @@
 package org.firas.dbm.dto
 
+import org.firas.common.bo.CommonStatus
 import org.firas.dbm.bo.IndexType
 
 /**
@@ -14,6 +15,9 @@ import org.firas.dbm.bo.IndexType
  * @version 1.0.0
  * @since 1.0.0
  */
-class IndexDTO(val type: IndexType, val name: String?,
+class IndexDTO(val recId: String? = null,
+               val status: String = CommonStatus.NORMAL.toCode(),
+               val type: IndexType,
+               val name: String?,
                val tableId: String? = null) {
 }

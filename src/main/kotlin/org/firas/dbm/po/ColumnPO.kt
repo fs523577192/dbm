@@ -60,7 +60,8 @@ data class ColumnPO(var recId: String? = null,
 
     internal fun toBO(table: Table?): Column {
         val column = Column(toDbType(this.dbType!!), this.name!!, this.nullable!!,
-                this.defaultValue!!, this.onUpdateValue!!, this.comment!!, table)
+                "%s".format(this.defaultValue), this.onUpdateValue,
+                this.comment?:"", table)
         if (null != table) {
             table.columnMap.put(column.name, column)
         }

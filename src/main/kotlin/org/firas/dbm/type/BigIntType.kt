@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
  */
 class BigIntType(val unsigned: Boolean = false): DbType() {
 
-    override fun getKotlinType(): KClass<*> {
+    override fun toKotlinType(): KClass<*> {
         return Long::class
     }
 }

@@ -19,7 +19,7 @@ class VarcharType(val length: Int, val charset: String): DbType() {
         }
     }
 
-    override fun getKotlinType(): KClass<*> {
+    override fun toKotlinType(): KClass<*> {
         return String::class
     }
 }

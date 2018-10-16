@@ -12,7 +12,7 @@
         <table name="info_database"/>
         <attributes>
             <id name="recId">
-                <column name="rec_id" length="32"/>
+                <column name="rec_id" length="32" column-definition="char(32)"/>
             </id>
             <basic name="name">
                 <column name="name" length="32"/>
@@ -37,7 +37,7 @@
         <table name="info_schema"/>
         <attributes>
             <id name="recId">
-                <column name="rec_id" length="32"/>
+                <column name="rec_id" length="32" column-definition="char(32)"/>
             </id>
             <basic name="name">
                 <column name="name" length="32"/>
@@ -53,7 +53,7 @@
         <table name="info_table"/>
         <attributes>
             <id name="recId">
-                <column name="rec_id" length="32"/>
+                <column name="rec_id" length="32" column-definition="char(32)"/>
             </id>
             <basic name="name">
                 <column name="name" length="32"/>
@@ -62,7 +62,7 @@
                 <column name="comment" length="200"/>
             </basic>
             <basic name="status">
-                <column name="status" length="1"/>
+                <column name="status" length="2" column-definition="char(2)"/>
             </basic>
             <basic name="attributes">
                 <column name="attributes" length="200"/>
@@ -80,7 +80,7 @@
         <table name="info_column"/>
         <attributes>
             <id name="recId">
-                <column name="rec_id" length="32"/>
+                <column name="rec_id" length="32" column-definition="char(32)"/>
             </id>
             <basic name="name">
                 <column name="name" length="32"/>
@@ -89,7 +89,7 @@
                 <column name="comment" length="200"/>
             </basic>
             <basic name="status">
-                <column name="status" length="1"/>
+                <column name="status" length="2" column-definition="char(2)"/>
             </basic>
             <basic name="dbType">
                 <column name="db_type" length="200"/>
@@ -117,13 +117,13 @@
         <table name="info_index"/>
         <attributes>
             <id name="recId">
-                <column name="rec_id" length="32"/>
+                <column name="rec_id" length="32" column-definition="char(32)"/>
             </id>
             <basic name="name">
                 <column name="name" length="32"/>
             </basic>
             <basic name="status">
-                <column name="status" length="1"/>
+                <column name="status" length="2" column-definition="char(2)"/>
             </basic>
             <basic name="createTime">
                 <column name="create_time"/>
@@ -141,13 +141,16 @@
         <id-class class="IndexColumnId"/>
         <attributes>
             <id name="indexId">
-                <column name="index_id" length="32" nullable="false"/>
+                <column name="index_id" length="32" nullable="false" column-definition="char(32)"/>
             </id>
             <id name="columnId">
-                <column name="column_id" length="32" nullable="false"/>
+                <column name="column_id" length="32" nullable="false" column-definition="char(32)"/>
             </id>
             <basic name="ordinal">
                 <column name="ordinal"/>
+            </basic>
+            <basic name="length">
+                <column name="length"/>
             </basic>
             <many-to-one name="index">
                 <join-column name="index_id" insertable="false" updatable="false"/>

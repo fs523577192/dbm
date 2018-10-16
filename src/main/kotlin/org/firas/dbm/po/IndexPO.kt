@@ -1,5 +1,6 @@
 package org.firas.dbm.po
 
+import org.firas.common.bo.CommonStatus
 import org.firas.common.po.PoBase
 import org.firas.dbm.bo.Index
 import org.firas.dbm.bo.IndexType
@@ -31,7 +32,7 @@ class IndexPO(var recId: String? = null,
     constructor(index: Index): this(
             null, 
             CommonStatus.NORMAL.toCode(),
-            index.indexType.ordinal(),
+            index.type.ordinal,
             index.name,
             Date(),
             if (null == index.table) null else TablePO(index.table!!)
@@ -40,13 +41,13 @@ class IndexPO(var recId: String? = null,
     constructor(index: IndexDTO): this(
             index.recId,
             index.status,
-            index.indexType.ordinal(),
-            index.name,
-            Date()
+            index.type.ordinal,
+            index.name
     )
 
     override fun toDTO(): IndexDTO {
-        return IndexDTO(IndexType.values().get(indexType), name, table?.recId)
+        return IndexDTO(recId, status ?: CommonStatus.NORMAL.toCode(),
+                IndexType.values().get(indexType), name, table?.recId)
     }
 
     override fun toBO(): Index {

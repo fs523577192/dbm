@@ -1,5 +1,6 @@
 package org.firas.dbm.dto
 
+import org.firas.common.bo.CommonStatus
 import org.firas.common.dto.DtoBase
 import org.firas.dbm.bo.Column
 import org.firas.dbm.type.DbType
@@ -17,7 +18,7 @@ import org.firas.dbm.type.DbType
  * @since 1.0.0
  */
 class ColumnDTO(val recId: String? = null,
-                val status: String,
+                val status: String = CommonStatus.NORMAL.toCode(),
                 val name: String,
                 val comment: String = "",
                 val dbType: DbType,

@@ -26,7 +26,7 @@ class DecimalType(val precision: Int, val scale: Int): DbType() {
         }
     }
 
-    override fun getKotlinType(): KClass<*> {
+    override fun toKotlinType(): KClass<*> {
         return BigDecimal::class
     }
 }

@@ -1,7 +1,8 @@
 package org.firas.dbm.po
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.firas.common.po.PoBase
+import org.firas.common.util.hashMapSizeFor
 import org.firas.dbm.bo.Database
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.dialect.OracleDialect
@@ -34,7 +35,7 @@ data class DatabasePO(var recId: String? = null,
             null,
             database.dbDialect.toString(),
             database.name,
-            ObjectMapper().writeValueAsString(database.attributes),
+            jacksonObjectMapper().writeValueAsString(database.attributes),
             null,
             database.host,
             database.port
@@ -44,14 +45,14 @@ data class DatabasePO(var recId: String? = null,
             database.recId,
             database.dbDialect.toString(),
             database.name,
-            ObjectMapper().writeValueAsString(database.attributes),
+            jacksonObjectMapper().writeValueAsString(database.attributes),
             null,
             database.host,
             database.port
     )
 
     override fun toDTO(): DatabaseDTO {
-        val objectMapper = ObjectMapper()
+        val objectMapper = jacksonObjectMapper()
         return DatabaseDTO(recId,
                 if ("oracle".equals(dbDialect, true)) OracleDialect.instance else MySQLDialect.instance,
                 name!!, objectMapper.readValue(attributes, Map::class.java) as Map<String, Any>,
@@ -59,14 +60,13 @@ data class DatabasePO(var recId: String? = null,
     }
 
     override fun toBO(): Database {
-        val objectMapper = ObjectMapper()
+        val objectMapper = jacksonObjectMapper()
         val schemaCollection = this.schemaCollection
-        return Database(if ("oracle".equals(dbDialect, true)) OracleDialect.instance else MySQLDialect.instance,
+        val schemaMap = HashMap<String, Schema>(hashMapSizeFor(schemaCollection?.size ?: 1))
+        val database = Database(if ("oracle".equals(dbDialect, true)) OracleDialect.instance else MySQLDialect.instance,
                 name!!, objectMapper.readValue(attributes, Map::class.java) as Map<String, Any>,
-                if (null == schemaCollection) HashMap() else schemaCollection.stream().collect(
-                        Supplier<MutableMap<String, Schema>> { HashMap() },
-                        BiConsumer<MutableMap<String, Schema>, SchemaPO> { map, schema -> map.put(schema.name!!, schema.toBO()) },
-                        BiConsumer { accumulated, newOne -> accumulated.putAll(newOne) }
-                ), host, port)
+                schemaMap, host, port)
+        schemaCollection?.stream()?.forEach{ schema -> schemaMap.put(schema.name!!, schema.toBO(database)) }
+        return database
     }
 }

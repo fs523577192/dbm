@@ -1,5 +1,6 @@
 package org.firas.dbm.dto
 
+import org.firas.common.bo.CommonStatus
 import org.firas.common.dto.DtoBase
 import org.firas.dbm.bo.Table
 
@@ -16,7 +17,7 @@ import org.firas.dbm.bo.Table
  * @since 1.0.0
  */
 class TableDTO(val recId: String? = null,
-               val status: String,
+               val status: String = CommonStatus.NORMAL.toCode(),
                val name: String,
                val comment: String = "",
                val attributes: Map<String, Any> = HashMap(),

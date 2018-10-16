@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
  */
 class ClobType(): DbType() {
 
-    override fun getKotlinType(): KClass<*> {
+    override fun toKotlinType(): KClass<*> {
         return Int::class
     }
 }

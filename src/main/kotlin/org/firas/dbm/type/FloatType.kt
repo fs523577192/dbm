@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
  */
 class FloatType(): DbType() {
 
-    override fun getKotlinType(): KClass<*> {
+    override fun toKotlinType(): KClass<*> {
         return Float::class
     }
 }

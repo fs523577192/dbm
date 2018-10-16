@@ -14,7 +14,7 @@ import java.util.Date
  */
 class DateTimeType(val fractional: Int = 0): DbType() {
 
-    override fun getKotlinType(): KClass<*> {
+    override fun toKotlinType(): KClass<*> {
         return Date::class
     }
 }

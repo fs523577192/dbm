@@ -1,6 +1,6 @@
 package org.firas.dbm.po
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.firas.common.bo.CommonStatus
 import org.firas.common.util.hashMapSizeFor
 import org.firas.dbm.bo.Schema
@@ -35,8 +35,9 @@ data class TablePO(var recId: String? = null,
             CommonStatus.NORMAL.toCode(),
             table.name,
             table.comment,
-            ObjectMapper().writeValueAsString(table.attributes),
-            if (null == table.schema) null else SchemaPO(table.schema!!)
+            jacksonObjectMapper().writeValueAsString(table.attributes),
+            if (null == table.schema) null else SchemaPO(table.schema!!),
+            Date()
     )
 
     constructor(table: TableDTO): this(
@@ -44,7 +45,7 @@ data class TablePO(var recId: String? = null,
             table.status,
             table.name,
             table.comment,
-            ObjectMapper().writeValueAsString(table.attributes)
+            jacksonObjectMapper().writeValueAsString(table.attributes)
     )
 
     fun toBO(): Table {
@@ -52,7 +53,7 @@ data class TablePO(var recId: String? = null,
     }
 
     internal fun toBO(schema: Schema?): Table {
-        val objectMapper = ObjectMapper()
+        val objectMapper = jacksonObjectMapper()
         val columnList = this.columnList
         val table = Table(name!!, comment!!, schema,
                 objectMapper.readValue(attributes, Map::class.java) as Map<String, Any>,

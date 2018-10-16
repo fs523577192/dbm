@@ -17,6 +17,18 @@ import java.util.*
 class ColumnInIndexPO(index: IndexPO? = null, column: ColumnPO? = null,
                       var ordinal: Int = 0, var length: Int? = null) {
 
+    constructor(columnInIndex: ColumnInIndex): this(
+            IndexPO(columnInIndex.index),
+            ColumnPO(columnInIndex.column),
+            0,
+            columnInIndex.length
+    )
+
+    constructor(columnInIndex: ColumnInIndexDTO): this(
+            ordinal = columnInIndex.ordinal,
+            length = columnInIndex.length
+    )
+
     var indexId: String? = index?.recId
         set(value) {
             if (Objects.equals(value, index?.recId)) {

@@ -28,6 +28,23 @@ class IndexPO(var recId: String? = null,
               var table: TablePO? = null,
               var columnList: List<ColumnInIndexPO>? = null): PoBase<Index, IndexDTO> {
 
+    constructor(index: Index): this(
+            null, 
+            CommonStatus.NORMAL.toCode(),
+            index.indexType.ordinal(),
+            index.name,
+            Date(),
+            if (null == index.table) null else TablePO(index.table!!)
+    )
+
+    constructor(index: IndexDTO): this(
+            index.recId,
+            index.status,
+            index.indexType.ordinal(),
+            index.name,
+            Date()
+    )
+
     override fun toDTO(): IndexDTO {
         return IndexDTO(IndexType.values().get(indexType), name, table?.recId)
     }

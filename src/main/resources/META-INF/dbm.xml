@@ -2,8 +2,8 @@
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm
-                 http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
-                 version="1.0">
+                 http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+                 version="2.0">
     <description>数据库管理需要的实体</description>
 
     <package>org.firas.dbm.po</package>
@@ -138,26 +138,25 @@
 
     <entity class="ColumnInIndexPO" name="ColumnInIndexPO">
         <table name="info_index_column"/>
-        <id-class class="IndexColumnId"/>
         <attributes>
-            <id name="indexId">
-                <column name="index_id" length="32" nullable="false" column-definition="char(32)"/>
-            </id>
-            <id name="columnId">
-                <column name="column_id" length="32" nullable="false" column-definition="char(32)"/>
-            </id>
-            <basic name="ordinal">
-                <column name="ordinal"/>
-            </basic>
-            <basic name="length">
-                <column name="length"/>
-            </basic>
-            <many-to-one name="index">
+            <embedded-id name="id"/>
+            <many-to-one name="index" maps-id="indexId">
                 <join-column name="index_id" insertable="false" updatable="false"/>
             </many-to-one>
-            <many-to-one name="column">
+            <many-to-one name="column" maps-id="columnId">
                 <join-column name="column_id" insertable="false" updatable="false"/>
             </many-to-one>
         </attributes>
     </entity>
+
+    <embeddable class="org.firas.dbm.po.IndexColumnId">
+        <attributes>
+            <basic name="indexId">
+                <column name="index_id" length="32" nullable="false"/>
+            </basic>
+            <basic name="columnId">
+                <column name="column_id" length="32" nullable="false"/>
+            </basic>
+        </attributes>
+    </embeddable>
 </entity-mappings>

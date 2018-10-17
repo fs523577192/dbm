@@ -1,5 +1,6 @@
 package org.firas.dbm.bo
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.firas.dbm.dialect.DbDialect
 import java.util.*
 
@@ -28,5 +29,11 @@ class Database(val dbDialect: DbDialect, val name: String,
     override fun hashCode(): Int {
         return dbDialect.hashCode() + name.hashCode() * 97 +
                 Objects.hashCode(host) * 89 + Objects.hashCode(port) * 83
+    }
+
+    override fun toString(): String {
+        return "Database{dbDialect=%s, name=%s, host=%s, port=%d, attributes=%s}".format(
+                this.dbDialect, this.name, this.host, this.port,
+                jacksonObjectMapper().writeValueAsString(this.attributes))
     }
 }

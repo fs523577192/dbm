@@ -1,5 +1,6 @@
 package org.firas.dbm.bo
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
@@ -22,5 +23,15 @@ data class Table(val name: String, val comment: String = "", var schema: Schema?
             return false
         }
         return name.equals(other.name) && Objects.equals(schema, other.schema)
+    }
+
+    override fun hashCode(): Int {
+        return this.name.hashCode() + 97 * Objects.hashCode(schema)
+    }
+
+    override fun toString(): String {
+        return "Table{name=%s, comment=%s, schema=%s, attributes=%s}".format(
+                this.name, this.comment, this.schema?.toString(),
+                jacksonObjectMapper().writeValueAsString(this.attributes))
     }
 }

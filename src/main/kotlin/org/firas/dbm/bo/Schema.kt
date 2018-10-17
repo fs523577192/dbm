@@ -24,4 +24,9 @@ class Schema(val name: String, var database: Database? = null,
     override fun hashCode(): Int {
         return name.hashCode() + Objects.hashCode(database) * 97
     }
+
+    override fun toString(): String {
+        return "Schema{database=%s, name=%s}".format(
+                this.database?.toString(), this.name)
+    }
 }

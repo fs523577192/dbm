@@ -15,5 +15,4 @@ import javax.persistence.Embeddable
  * @version 1.0.0
  * @since 1.0.0
  */
-@Embeddable
 data class IndexColumnId(var indexId: String? = null, var columnId: String? = null): Serializable

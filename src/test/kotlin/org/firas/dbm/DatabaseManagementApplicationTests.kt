@@ -27,7 +27,7 @@ class DatabaseManagementApplicationTests {
 			root, query, criteriaBuilder ->
 			criteriaBuilder.equal(root.get<String>("name"), "SETTSC_PD_DTL")
 		}.get()
-        log.info("%b".format(null == table.toBO().schema))
+        log.info("%d".format(table.toBO().columnMap.size))
 	}
 
 	@Resource

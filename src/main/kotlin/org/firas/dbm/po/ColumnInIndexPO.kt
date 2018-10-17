@@ -17,6 +17,29 @@ import java.util.*
 class ColumnInIndexPO(index: IndexPO? = null, column: ColumnPO? = null,
                       var ordinal: Int = 0, var length: Int? = null) {
 
+    var index: IndexPO? = index
+        set(value) {
+            field = value
+            id.indexId = value?.recId
+        }
+
+    var column: ColumnPO? = column
+        set(value) {
+            field = value
+            id.columnId = value?.recId
+        }
+
+    var id: IndexColumnId = IndexColumnId(index?.recId, column?.recId)
+        set(value) {
+            field = value
+            if (!Objects.equals(value.indexId, this.index?.recId)) {
+                this.index = null
+            }
+            if (!Objects.equals(value.columnId, this.column?.recId)) {
+                this.column = null
+            }
+        }
+
     constructor(columnInIndex: ColumnInIndex): this(
             IndexPO(columnInIndex.index),
             ColumnPO(columnInIndex.column),
@@ -28,34 +51,6 @@ class ColumnInIndexPO(index: IndexPO? = null, column: ColumnPO? = null,
             ordinal = columnInIndex.ordinal,
             length = columnInIndex.length
     )
-
-    var indexId: String? = index?.recId
-        set(value) {
-            if (Objects.equals(value, index?.recId)) {
-                this.index = null
-            }
-            field = value
-        }
-
-    var columnId: String? = column?.recId
-        set(value) {
-            if (Objects.equals(value, column?.recId)) {
-                this.column = null
-            }
-            field = value
-        }
-
-    var index: IndexPO? = index
-        set(value) {
-            field = value
-            this.indexId = value?.recId
-        }
-
-    var column: ColumnPO? = null
-        set(value) {
-            field = value
-            this.columnId = value?.recId
-        }
 
     fun toDTO(): ColumnInIndexDTO {
         return ColumnInIndexDTO(index!!.recId!!, column!!.recId!!, ordinal)

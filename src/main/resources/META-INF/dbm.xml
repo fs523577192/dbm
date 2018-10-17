@@ -73,6 +73,8 @@
             <one-to-many name="columnList" fetch="LAZY" mapped-by="table">
                 <order-by>createTime</order-by>
             </one-to-many>
+            <one-to-many name="indexList" fetch="LAZY" mapped-by="table">
+            </one-to-many>
         </attributes>
     </entity>
 
@@ -129,10 +131,12 @@
                 <column name="create_time"/>
                 <temporal>TIMESTAMP</temporal>
             </basic>
+            <many-to-one name="table" fetch="LAZY">
+                <join-column name="table_id" nullable="false" column-definition="char(32)"/>
+            </many-to-one>
             <one-to-many name="columnList" fetch="LAZY" mapped-by="index">
                 <order-by>ordinal</order-by>
             </one-to-many>
-            <transient name="table"/>
         </attributes>
     </entity>
 

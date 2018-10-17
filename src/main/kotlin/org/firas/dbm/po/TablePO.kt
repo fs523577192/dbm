@@ -3,10 +3,13 @@ package org.firas.dbm.po
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.firas.common.bo.CommonStatus
 import org.firas.common.util.hashMapSizeFor
+import org.firas.dbm.bo.Index
 import org.firas.dbm.bo.Schema
 import org.firas.dbm.bo.Table
 import org.firas.dbm.dto.TableDTO
 import java.util.*
+import java.util.function.BiConsumer
+import java.util.function.Supplier
 import kotlin.collections.LinkedHashMap
 
 /**
@@ -28,7 +31,8 @@ data class TablePO(var recId: String? = null,
                    var attributes: String = "{}",
                    var schema: SchemaPO? = null,
                    var createTime: Date? = null,
-                   var columnList: List<ColumnPO>? = null) {
+                   var columnList: List<ColumnPO>? = null,
+                   var indexList: List<IndexPO>? = null) {
 
     constructor(table: Table): this(
             null,
@@ -55,12 +59,21 @@ data class TablePO(var recId: String? = null,
     internal fun toBO(schema: Schema?): Table {
         val objectMapper = jacksonObjectMapper()
         val columnList = this.columnList
+        val indexList = this.indexList
         val table = Table(name!!, comment!!, schema,
                 objectMapper.readValue(attributes, Map::class.java) as Map<String, Any>,
                 LinkedHashMap(), LinkedHashMap())
 
         if (null != columnList) {
             columnList.forEach { column -> table.columnMap.put(column.name!!, column.toBO(table)) }
+        }
+        if (null != indexList) {
+            table.indexMap = indexList.stream().collect(
+                    Supplier<MutableMap<String, Index>> { HashMap() },
+                    BiConsumer { map, indexPO ->
+                        map.put(indexPO.name!!, indexPO.toBO(table)) },
+                    BiConsumer { map, newMap -> map.putAll(newMap) }
+            )
         }
         if (null != schema) {
             val hashMap = HashMap<String, Table>(

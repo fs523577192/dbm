@@ -1,6 +1,7 @@
 package org.firas.dbm.po
 
 import org.firas.dbm.bo.ColumnInIndex
+import org.firas.dbm.bo.Index
 import org.firas.dbm.bo.Table
 import org.firas.dbm.dto.ColumnInIndexDTO
 import java.util.*
@@ -58,5 +59,10 @@ class ColumnInIndexPO(index: IndexPO? = null, column: ColumnPO? = null,
 
     fun toBO(table: Table?): ColumnInIndex {
         return ColumnInIndex(index!!.toBO(table), column!!.toBO(table), length)
+    }
+
+    fun toBO(index: Index?): ColumnInIndex {
+        val index = index ?: this.index!!.toBO()
+        return ColumnInIndex(index, this.column!!.toBO(index.table))
     }
 }

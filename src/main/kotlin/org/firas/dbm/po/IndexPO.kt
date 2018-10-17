@@ -2,6 +2,7 @@ package org.firas.dbm.po
 
 import org.firas.common.bo.CommonStatus
 import org.firas.common.po.PoBase
+import org.firas.dbm.bo.ColumnInIndex
 import org.firas.dbm.bo.Index
 import org.firas.dbm.bo.IndexType
 import org.firas.dbm.bo.Table
@@ -55,11 +56,11 @@ class IndexPO(var recId: String? = null,
     }
 
     fun toBO(table: Table?): Index {
-        val table = table ?: this.table?.toBO()
-        val columnList = this.columnList?.stream()
-                ?.map { it.toBO(table) }
-                ?.collect(Collectors.toList())
-        return Index(IndexType.values().get(indexType), name,
-                columnList ?: ArrayList(1))
+        val index = Index(IndexType.values().get(indexType), name, null)
+        index.table = table ?: this.table?.toBO()
+        val columnList = ArrayList<ColumnInIndex>()
+        this.columnList?.forEach { columnList.add(it.toBO(index)) }
+        index.columnList = columnList
+        return index
     }
 }

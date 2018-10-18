@@ -61,6 +61,10 @@ class OracleDialect: DbDialect() {
         }
     }
 
+    override fun toString(): String {
+        return "oracle"
+    }
+
     override fun toSQL(dbType: DbType): String {
         if (dbType is VarcharType) {
             return "VARCHAR2(" + dbType.length + ')'

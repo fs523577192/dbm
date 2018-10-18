@@ -60,6 +60,10 @@ class MySQLDialect private constructor(): DbDialect() {
         }
     }
 
+    override fun toString(): String {
+        return "mysql"
+    }
+
     override fun toSQL(dbType: DbType): String {
         if (dbType is VarcharType) {
             return "VARCHAR(" + dbType.length +

@@ -3,6 +3,7 @@ package org.firas.dbm.dto
 import org.firas.common.dto.DtoBase
 import org.firas.dbm.bo.Database
 import org.firas.dbm.dialect.DbDialect
+import kotlin.collections.HashMap
 
 /**
  * <b><code></code></b>

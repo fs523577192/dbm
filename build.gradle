@@ -1,45 +1,15 @@
-buildscript {
-	ext {
-		kotlinVersion = '1.2.51'
-		jacksonVersion = '2.9.6'
-	}
-	repositories {
-        mavenLocal()
-		maven {
-			url 'https://maven.aliyun.com/repository/central'
-		}
-	}
-	dependencies {
-		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}")
-	}
-}
-
-plugins {
-	id 'org.jetbrains.kotlin.multiplatform' version '1.2.71'
-}
 apply plugin: 'eclipse'
 
 group = 'org.firas.dbm'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
-/*
-compileKotlin {
-	kotlinOptions {
-		freeCompilerArgs = ["-Xjsr305=strict"]
-		jvmTarget = "1.8"
-	}
-}
-compileTestKotlin {
-	kotlinOptions {
-		freeCompilerArgs = ["-Xjsr305=strict"]
-		jvmTarget = "1.8"
-	}
-}
-*/
 
 allprojects {
+	ext {
+		kotlinVersion = '1.2.51'
+		jacksonVersion = '2.9.6'
+		springBootVersion = '2.0.5.RELEASE'
+	}
+
 	repositories {
 		mavenLocal()
 		maven {

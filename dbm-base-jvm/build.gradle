@@ -1,8 +1,4 @@
 buildscript {
-    ext {
-        kotlinVersion = '1.2.51'
-        jacksonVersion = '2.9.6'
-    }
     repositories {
         mavenLocal()
         maven {
@@ -22,5 +18,8 @@ group = "org.firas.dbm"
 version = '0.0.1-SNAPSHOT'
 
 dependencies {
-    compile project(":dbm-base-jvm")
+    expectedBy project(':dbm-base-common')
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
+

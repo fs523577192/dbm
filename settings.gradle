@@ -1,3 +1,3 @@
 rootProject.name = 'database-management'
 
-include 'dbm-common' // , 'dbm-java-api', 'dbm-java-biz'
+include 'dbm-base-common', 'dbm-base-jvm', 'dbm-base-js', 'dbm-java-api', 'dbm-java-biz'

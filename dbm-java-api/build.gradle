@@ -1,0 +1,18 @@
+apply plugin: 'kotlin-platform-jvm'
+
+group = "org.firas.dbm"
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    maven {
+        url 'https://maven.aliyun.com/repository/central'
+    }
+}
+
+dependencies {
+    implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    expectedBy project(":collection-common")
+}

@@ -22,6 +22,7 @@ enum class CommonStatus(val desc: String) {
     NOT_BEGIN("未开始");
 
     fun toCode(): String {
-        return "%2d".format(ordinal)
+        val code = "0${ordinal}"
+        return code.subSequence(code.length - 2, code.length).toString()
     }
 }

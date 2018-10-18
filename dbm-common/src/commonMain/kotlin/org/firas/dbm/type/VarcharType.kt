@@ -15,7 +15,7 @@ class VarcharType(val length: Int, val charset: String): DbType() {
 
     init {
         if (length <= 0) {
-            throw IllegalArgumentException("Varchar的length必须是一个正整数：%d".format(length))
+            throw IllegalArgumentException("Varchar的length必须是一个正整数：${length}")
         }
     }
 

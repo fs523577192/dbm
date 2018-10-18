@@ -1,8 +1,9 @@
 package org.firas.dbm.bo
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.firas.common.util.getJsonConverter
+import org.firas.common.util.safeEquals
+import org.firas.common.util.safeHashCode
 import org.firas.dbm.dialect.DbDialect
-import java.util.*
 
 /**
  * 数据库
@@ -23,17 +24,17 @@ class Database(val dbDialect: DbDialect, val name: String,
             return false
         }
         return dbDialect.equals(other.dbDialect) && name.equals(other.name) &&
-                Objects.equals(host, other.host) && Objects.equals(port, other.port)
+                safeEquals(host, other.host) && safeEquals(port, other.port)
     }
 
     override fun hashCode(): Int {
         return dbDialect.hashCode() + name.hashCode() * 97 +
-                Objects.hashCode(host) * 89 + Objects.hashCode(port) * 83
+                safeHashCode(host) * 89 + safeHashCode(port) * 83
     }
 
     override fun toString(): String {
-        return "Database{dbDialect=%s, name=%s, host=%s, port=%d, attributes=%s}".format(
-                this.dbDialect, this.name, this.host, this.port,
-                jacksonObjectMapper().writeValueAsString(this.attributes))
+        return "Database{dbDialect=" + this.dbDialect.toString() +
+                ", name=${name}, host=${host}, port=${port}, attributes=" +
+                getJsonConverter().stringify(this.attributes) + "}"
     }
 }

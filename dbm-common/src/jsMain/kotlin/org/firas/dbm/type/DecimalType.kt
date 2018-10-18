@@ -1,6 +1,5 @@
 package org.firas.dbm.type
 
-import java.math.BigDecimal
 import kotlin.reflect.KClass
 
 /**
@@ -15,18 +14,18 @@ import kotlin.reflect.KClass
  * @version 1.0.0
  * @since 1.0.0
  */
-class DecimalType(val precision: Int, val scale: Int): DbType() {
+actual class DecimalType(val precision: Int, val scale: Int): DbType() {
 
     init {
         if (precision <= 0) {
-            throw IllegalArgumentException("Decimal的precision必须是一个正整数：%d".format(precision))
+            throw IllegalArgumentException("Decimal的precision必须是一个正整数：${precision}")
         }
         if (scale < 0) {
-            throw IllegalArgumentException("Decimal的scale必须是一个非负整数：%d".format(scale))
+            throw IllegalArgumentException("Decimal的scale必须是一个非负整数：${scale}")
         }
     }
 
     override fun toKotlinType(): KClass<*> {
-        return BigDecimal::class
+        return String::class
     }
 }

@@ -1,6 +1,8 @@
 package org.firas.dbm.bo
 
-import java.util.*
+import org.firas.common.util.safeEquals
+import org.firas.common.util.safeHashCode
+import kotlin.collections.*
 
 /**
  * 数据库schema
@@ -18,15 +20,15 @@ class Schema(val name: String, var database: Database? = null,
         if (other !is Schema) {
             return false
         }
-        return name.equals(other.name) && Objects.equals(database, other.database)
+        return name.equals(other.name) && safeEquals(database, other.database)
     }
 
     override fun hashCode(): Int {
-        return name.hashCode() + Objects.hashCode(database) * 97
+        return name.hashCode() + safeHashCode(database) * 97
     }
 
     override fun toString(): String {
-        return "Schema{database=%s, name=%s}".format(
-                this.database?.toString(), this.name)
+        val db = this.database?.toString()
+        return "Schema{database=${db}, name=${name}}"
     }
 }

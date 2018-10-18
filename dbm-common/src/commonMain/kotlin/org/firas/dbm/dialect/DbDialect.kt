@@ -10,9 +10,7 @@ import org.firas.dbm.domain.ColumnModification
 import org.firas.dbm.domain.ColumnRename
 import org.firas.dbm.domain.TableCreation
 import org.firas.dbm.type.DbType
-import java.sql.Connection
-import java.util.function.BiConsumer
-import java.util.function.Supplier
+import kotlin.collections.*
 
 /**
  * 数据库方言
@@ -37,14 +35,12 @@ abstract class DbDialect {
     abstract fun toSQL(dbType: DbType): String
 
     open fun toSQL(column: Column): String {
-        val dbType = column.dbType
-        return "%s%s%s %s %sNULL DEFAULT %s %s".format(
-                getNameQuote(), column.name, getNameQuote(),
-                toSQL(dbType),
-                if (column.nullable) "" else "NOT ",
-                column.defaultValue,
-                if (null == column.onUpdateValue) "" else "ON UPDATE %s".format(column.onUpdateValue)
-        )
+        val dbType = toSQL(column.dbType)
+        val nameQuote = getNameQuote()
+        return "$nameQuote${column.name}$nameQuote $dbType " +
+                (if (column.nullable) "" else "NOT ") +
+                "NULL DEFAULT ${column.defaultValue} " +
+                (if (null == column.onUpdateValue) "" else "ON UPDATE ${column.onUpdateValue}")
     }
 
     abstract fun toSQL(columnComment: ColumnComment): String
@@ -53,11 +49,10 @@ abstract class DbDialect {
         val column = columnAddition.column
         val table = column.table
         val schema = table!!.schema
-        return "ALTER TABLE %s%s%s.%s%s%s ADD COLUMN %s".format(
-                getNameQuote(), schema!!.name, getNameQuote(),
-                getNameQuote(), table.name, getNameQuote(),
+        val nameQuote = getNameQuote()
+        return "ALTER TABLE $nameQuote${schema!!.name}$nameQuote." +
+                "$nameQuote${table.name}$nameQuote ADD COLUMN " +
                 toSQL(column)
-        )
     }
 
     abstract fun toSQL(columnRename: ColumnRename): String
@@ -69,41 +64,34 @@ abstract class DbDialect {
                 columnModification.onUpdateValue)
         val table = column.table
         val schema = table!!.schema
-        return "ALTER TABLE %s%s%s.%s%s%s MODIFY COLUMN %s".format(
-                getNameQuote(), schema!!.name, getNameQuote(),
-                getNameQuote(), table.name, getNameQuote(),
+        val nameQuote = getNameQuote()
+        return "ALTER TABLE $nameQuote${schema!!.name}$nameQuote." +
+                "$nameQuote${table.name}$nameQuote MODIFY COLUMN " +
                 toSQL(newColumn)
-        )
     }
 
     open fun toSQL(columnDrop: ColumnDrop): String {
         val column = columnDrop.column
         val table = column.table
         val schema = table!!.schema
-        return "ALTER TABLE %s%s%s.%s%s%s DROP COLUMN %s%s%s".format(
-                getNameQuote(), schema!!.name, getNameQuote(),
-                getNameQuote(), table.name, getNameQuote(),
-                getNameQuote(), column.name, getNameQuote()
-        )
+        val nameQuote = getNameQuote()
+        return "ALTER TABLE $nameQuote${schema!!.name}$nameQuote." +
+                "$nameQuote${table.name}$nameQuote DROP COLUMN " +
+                "$nameQuote${column.name}$nameQuote"
     }
 
     open fun toSQL(tableCreation: TableCreation): String {
         val table = tableCreation.table
         val schema = table.schema
-        val builder = StringBuilder("CREATE TABLE %s%s%s.%s%s%s %s(".format(
-                getNameQuote(), schema!!.name, getNameQuote(),
-                getNameQuote(), table.name, getNameQuote(),
-                if (tableCreation.ifNotExists) "IF NOT EXISTS " else ""
-        ))
-        return builder.append(table.columnMap!!.values.stream().collect(
-                Supplier<MutableList<String>> { ArrayList() },
-                BiConsumer<MutableList<String>, Column> { list, column -> list.add(toSQL(column))},
-                BiConsumer { accumulated, newOne -> accumulated.addAll(newOne) })
-                .joinToString(transform = {str -> str}))
-                .append(")").toString()
-    }
+        val nameQuote = getNameQuote()
+        val builder = StringBuilder("CREATE TABLE $nameQuote${schema!!.name}$nameQuote." +
+                "$nameQuote${table.name}$nameQuote " +
+                if (tableCreation.ifNotExists) "IF NOT EXISTS (" else "("
+        )
 
-    abstract fun getConnection(database: Database, userName: String, password: String): Connection
+        val temp = table.columnMap.values.joinToString(transform = { toSQL(it) })
+        return builder.append(temp).append(")").toString()
+    }
 
     abstract fun fetchInfo(schema: Schema, userName: String, password: String): Schema
 }

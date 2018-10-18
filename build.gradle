@@ -1,7 +1,7 @@
 buildscript {
 	ext {
 		kotlinVersion = '1.2.51'
-		springBootVersion = '2.0.5.RELEASE'
+		jacksonVersion = '2.9.6'
 	}
 	repositories {
         mavenLocal()
@@ -10,23 +10,21 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}")
 	}
 }
 
-apply plugin: 'kotlin'
-apply plugin: 'kotlin-spring'
-apply plugin: 'kotlin-jpa'
+plugins {
+	id 'org.jetbrains.kotlin.multiplatform' version '1.2.71'
+}
 apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 
 group = 'org.firas.dbm'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+/*
 compileKotlin {
 	kotlinOptions {
 		freeCompilerArgs = ["-Xjsr305=strict"]
@@ -39,22 +37,13 @@ compileTestKotlin {
 		jvmTarget = "1.8"
 	}
 }
+*/
 
-repositories {
-	mavenLocal()
-	maven {
-		url 'https://maven.aliyun.com/repository/central'
+allprojects {
+	repositories {
+		mavenLocal()
+		maven {
+			url 'https://maven.aliyun.com/repository/central'
+		}
 	}
-}
-
-
-dependencies {
-	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-	implementation('org.springframework.boot:spring-boot-starter-web')
-	implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-    runtime group: 'mysql', name: 'mysql-connector-java', version: '5.1.47'
-    runtime group: 'com.hynnet', name: 'oracle-driver-ojdbc', version: '12.1.0.2'
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }

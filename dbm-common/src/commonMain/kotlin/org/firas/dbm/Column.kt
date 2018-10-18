@@ -1,7 +1,8 @@
 package org.firas.dbm.bo
 
+import org.firas.common.util.safeEquals
+import org.firas.common.util.safeHashCode
 import org.firas.dbm.type.DbType
-import java.util.*
 
 /**
  * 数据库表中的列
@@ -23,11 +24,11 @@ class Column(val dbType: DbType, val name: String,
             return false
         }
         return dbType.equals(other.dbType) && name.equals(other.name) &&
-                Objects.equals(table, other.table)
+                safeEquals(table, other.table)
     }
 
     override fun hashCode(): Int {
         return dbType.hashCode() + name.hashCode() * 97 +
-                Objects.hashCode(table) * 89
+                safeHashCode(table) * 89
     }
 }

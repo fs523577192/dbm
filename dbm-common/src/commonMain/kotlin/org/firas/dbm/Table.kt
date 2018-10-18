@@ -1,8 +1,9 @@
 package org.firas.dbm.bo
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import java.util.*
-import kotlin.collections.LinkedHashMap
+import org.firas.common.util.getJsonConverter
+import org.firas.common.util.safeEquals
+import org.firas.common.util.safeHashCode
+import kotlin.collections.*
 
 /**
  * 数据库表
@@ -22,16 +23,16 @@ data class Table(val name: String, val comment: String = "", var schema: Schema?
         if (other !is Table) {
             return false
         }
-        return name.equals(other.name) && Objects.equals(schema, other.schema)
+        return name.equals(other.name) && safeEquals(schema, other.schema)
     }
 
     override fun hashCode(): Int {
-        return this.name.hashCode() + 97 * Objects.hashCode(schema)
+        return this.name.hashCode() + 97 * safeHashCode(schema)
     }
 
     override fun toString(): String {
-        return "Table{name=%s, comment=%s, schema=%s, attributes=%s}".format(
-                this.name, this.comment, this.schema?.toString(),
-                jacksonObjectMapper().writeValueAsString(this.attributes))
+        return "Table{name=${name}, comment=${comment}, schema=" +
+                this.schema?.toString() + ", attributes=" +
+                getJsonConverter().stringify(this.attributes) + "}"
     }
 }

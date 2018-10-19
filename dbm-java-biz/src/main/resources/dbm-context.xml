@@ -17,11 +17,15 @@
     <aop:config>
         <aop:pointcut id="databaseManagerPointcut"
                       expression="execution(* org.firas.dbm.service.impl.DatabaseManagerImpl.*(..))"/>
+        <aop:pointcut id="schemaManagerPointcut"
+                      expression="execution(* org.firas.dbm.service.impl.SchemaManagerImpl.*(..))"/>
         <aop:advisor advice-ref="databaseManagerTxAdvice"
                      pointcut-ref="databaseManagerPointcut"/>
+        <aop:advisor advice-ref="schemaManagerTxAdvice"
+                     pointcut-ref="schemaManagerPointcut"/>
     </aop:config>
 
-    <bean id="databaseService" class="org.firas.dbm.service.impl.DatabaseManagerImpl"
+    <bean id="databaseManager" class="org.firas.dbm.service.impl.DatabaseManagerImpl"
           autowire="byName"></bean>
     <tx:advice id="databaseManagerTxAdvice">
         <tx:attributes>
@@ -31,4 +35,13 @@
         </tx:attributes>
     </tx:advice>
 
+    <bean id="schemaManager" class="org.firas.dbm.service.impl.SchemaManagerImpl"
+          autowire="byName"></bean>
+    <tx:advice id="schemaManagerTxAdvice">
+        <tx:attributes>
+            <tx:method name="update" rollback-for="Exception"/>
+            <tx:method name="create" rollback-for="Exception"/>
+            <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
 </beans>

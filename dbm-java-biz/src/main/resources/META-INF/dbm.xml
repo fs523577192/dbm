@@ -43,7 +43,7 @@
                 <column name="name" length="32"/>
             </basic>
             <many-to-one name="database" fetch="LAZY">
-                <join-column name="database_id"/>
+                <join-column name="database_id" nullable="false" column-definition="char(32)"/>
             </many-to-one>
             <one-to-many name="tableCollection" fetch="LAZY" mapped-by="schema"/>
         </attributes>
@@ -68,7 +68,7 @@
                 <column name="attributes" length="200"/>
             </basic>
             <many-to-one name="schema" fetch="LAZY">
-                <join-column name="schema_id"/>
+                <join-column name="schema_id" nullable="false" column-definition="char(32)"/>
             </many-to-one>
             <one-to-many name="columnList" fetch="LAZY" mapped-by="table">
                 <order-by>createTime</order-by>
@@ -110,7 +110,7 @@
                 <temporal>TIMESTAMP</temporal>
             </basic>
             <many-to-one name="table" fetch="LAZY">
-                <join-column name="table_id"/>
+                <join-column name="table_id" nullable="false" column-definition="char(32)"/>
             </many-to-one>
         </attributes>
     </entity>

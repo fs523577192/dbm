@@ -1,4 +1,4 @@
-package org.firas.dbm.databasemanagement
+package org.firas.dbm
 
 import org.firas.dbm.dao.ColumnDAO
 import org.firas.dbm.dao.DatabaseDAO

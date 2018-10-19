@@ -1,8 +1,8 @@
-package org.firas.dbm.databasemanagement
+package org.firas.dbm.service
 
+import org.firas.dbm.databasemanagement.DatabaseManagementApplication
 import org.firas.dbm.dialect.MySQLDialect
 import org.firas.dbm.dto.DatabaseDTO
-import org.firas.dbm.service.DatabaseManager
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,7 +13,7 @@ import javax.annotation.Resource
 import javax.transaction.Transactional
 
 @RunWith(SpringRunner::class)
-@SpringBootTest
+@SpringBootTest(classes = [DatabaseManagementApplication::class])
 class DatabaseManagerTests {
 
 	companion object {

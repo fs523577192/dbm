@@ -23,6 +23,12 @@ import org.firas.dbm.service.DatabaseManager
  */
 open class DatabaseManagerImpl: DatabaseManager {
 
+    override fun getById(id: String): DatabaseDTO {
+        return databaseDAO!!.findById(id).orElseGet {
+            throw EntityNotExistException("该ID的数据库不存在：$id")
+        }.toDTO()
+    }
+
     override fun listAll(): List<DatabaseDTO> {
         return databaseDAO!!.findAll().map { it.toDTO() }
     }
@@ -34,9 +40,10 @@ open class DatabaseManagerImpl: DatabaseManager {
     }
 
     override fun update(input: DatabaseDTO) {
-        val databasePO = databaseDAO!!.findById(input.recId)
+        val recId = input.recId ?: throw IllegalArgumentException("数据库信息的ID不能为空")
+        val databasePO = databaseDAO!!.findById(recId)
         if (!databasePO.isPresent) {
-            throw EntityNotExistException("该ID的数据库不存在：${input.recId}")
+            throw EntityNotExistException("该ID的数据库不存在：$recId")
         }
         val databaseNotNull = databasePO.get()
         if (!safeEquals(input.name, databaseNotNull.name)) {

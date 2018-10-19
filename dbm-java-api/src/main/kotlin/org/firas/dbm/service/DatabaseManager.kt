@@ -16,6 +16,8 @@ import org.firas.dbm.dto.DatabaseDTO
  */
 interface DatabaseManager {
 
+    fun getById(id: String): DatabaseDTO
+
     fun listAll(): List<DatabaseDTO>
 
     fun create(input: DatabaseDTO): DatabaseDTO

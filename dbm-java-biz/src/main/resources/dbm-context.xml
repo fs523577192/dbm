@@ -19,10 +19,23 @@
                       expression="execution(* org.firas.dbm.service.impl.DatabaseManagerImpl.*(..))"/>
         <aop:pointcut id="schemaManagerPointcut"
                       expression="execution(* org.firas.dbm.service.impl.SchemaManagerImpl.*(..))"/>
+        <aop:pointcut id="tableManagerPointcut"
+                      expression="execution(* org.firas.dbm.service.impl.TableManagerImpl.*(..))"/>
+        <aop:pointcut id="columnManagerPointcut"
+                      expression="execution(* org.firas.dbm.service.impl.ColumnManagerImpl.*(..))"/>
+        <aop:pointcut id="indexManagerPointcut"
+                      expression="execution(* org.firas.dbm.service.impl.IndexManagerImpl.*(..))"/>
+
         <aop:advisor advice-ref="databaseManagerTxAdvice"
                      pointcut-ref="databaseManagerPointcut"/>
         <aop:advisor advice-ref="schemaManagerTxAdvice"
                      pointcut-ref="schemaManagerPointcut"/>
+        <aop:advisor advice-ref="tableManagerTxAdvice"
+                     pointcut-ref="tableManagerPointcut"/>
+        <aop:advisor advice-ref="columnManagerTxAdvice"
+                     pointcut-ref="columnManagerPointcut"/>
+        <aop:advisor advice-ref="indexManagerTxAdvice"
+                     pointcut-ref="indexManagerPointcut"/>
     </aop:config>
 
     <bean id="databaseManager" class="org.firas.dbm.service.impl.DatabaseManagerImpl"
@@ -41,6 +54,39 @@
         <tx:attributes>
             <tx:method name="update" rollback-for="Exception"/>
             <tx:method name="create" rollback-for="Exception"/>
+            <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <bean id="tableManager" class="org.firas.dbm.service.impl.TableManagerImpl"
+          autowire="byName"></bean>
+    <tx:advice id="tableManagerTxAdvice">
+        <tx:attributes>
+            <tx:method name="update" rollback-for="Exception"/>
+            <tx:method name="create" rollback-for="Exception"/>
+            <tx:method name="remove" rollback-for="Exception"/>
+            <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <bean id="columnManager" class="org.firas.dbm.service.impl.ColumnManagerImpl"
+          autowire="byName"></bean>
+    <tx:advice id="columnManagerTxAdvice">
+        <tx:attributes>
+            <tx:method name="update" rollback-for="Exception"/>
+            <tx:method name="create" rollback-for="Exception"/>
+            <tx:method name="remove" rollback-for="Exception"/>
+            <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <bean id="indexManager" class="org.firas.dbm.service.impl.IndexManagerImpl"
+          autowire="byName"></bean>
+    <tx:advice id="indexManagerTxAdvice">
+        <tx:attributes>
+            <tx:method name="update" rollback-for="Exception"/>
+            <tx:method name="create" rollback-for="Exception"/>
+            <tx:method name="remove" rollback-for="Exception"/>
             <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
         </tx:attributes>
     </tx:advice>

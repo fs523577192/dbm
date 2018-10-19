@@ -2,6 +2,7 @@ package org.firas.dbm.po
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.firas.common.bo.CommonStatus
+import org.firas.common.po.PoBase
 import org.firas.common.util.hashMapSizeFor
 import org.firas.dbm.bo.Index
 import org.firas.dbm.bo.Schema
@@ -32,7 +33,7 @@ data class TablePO(var recId: String? = null,
                    var schema: SchemaPO? = null,
                    var createTime: Date? = null,
                    var columnList: List<ColumnPO>? = null,
-                   var indexList: List<IndexPO>? = null) {
+                   var indexList: List<IndexPO>? = null): PoBase<Table, TableDTO> {
 
     constructor(table: Table): this(
             null,
@@ -52,7 +53,7 @@ data class TablePO(var recId: String? = null,
             jacksonObjectMapper().writeValueAsString(table.attributes)
     )
 
-    fun toBO(): Table {
+    override fun toBO(): Table {
         return toBO(this.schema?.toBO())
     }
 
@@ -83,5 +84,12 @@ data class TablePO(var recId: String? = null,
             schema.tableMap = hashMap
         }
         return table
+    }
+
+    override fun toDTO(): TableDTO {
+        return TableDTO(this.recId, this.status ?: CommonStatus.NORMAL.toCode(),
+                this.name!!, this.comment ?: "",
+                jacksonObjectMapper().readValue(this.attributes ?: "{}", Map::class.java) as Map<String, Any>,
+                this.schema!!.recId!!)
     }
 }

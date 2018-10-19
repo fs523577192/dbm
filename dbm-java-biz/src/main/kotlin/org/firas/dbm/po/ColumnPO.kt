@@ -1,6 +1,7 @@
 package org.firas.dbm.po
 
 import org.firas.common.bo.CommonStatus
+import org.firas.common.po.PoBase
 import org.firas.dbm.bo.Column
 import org.firas.dbm.bo.Table
 import org.firas.dbm.dto.ColumnDTO
@@ -28,7 +29,7 @@ data class ColumnPO(var recId: String? = null,
                     var defaultValue: String? = null,
                     var onUpdateValue: String? = null,
                     var createTime: Date? = null,
-                    var table: TablePO? = null) {
+                    var table: TablePO? = null): PoBase<Column, ColumnDTO> {
 
     constructor(column: ColumnDTO): this(
             column.recId,
@@ -54,7 +55,7 @@ data class ColumnPO(var recId: String? = null,
             if (null == column.table) null else TablePO(column.table!!)
     )
 
-    fun toBO(): Column {
+    override fun toBO(): Column {
         return toBO(this.table?.toBO())
     }
 
@@ -66,5 +67,12 @@ data class ColumnPO(var recId: String? = null,
             table.columnMap.put(column.name, column)
         }
         return column
+    }
+
+    override fun toDTO(): ColumnDTO {
+        return ColumnDTO(this.recId, this.status ?: CommonStatus.NORMAL.toCode(),
+                this.name!!, this.comment ?: "", toDbType(this.dbType!!),
+                this.nullable ?: true, this.defaultValue ?: "null",
+                this.onUpdateValue, this.table!!.recId!!)
     }
 }

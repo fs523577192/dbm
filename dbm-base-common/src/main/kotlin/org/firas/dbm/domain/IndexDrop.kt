@@ -3,9 +3,8 @@ package org.firas.dbm.domain
 import org.firas.dbm.bo.Index
 
 /**
- * <b><code></code></b>
  * <p/>
- *
+ * 删除索引
  * <p/>
  *
  * <b>Creation Time:</b> 2018年10月16日

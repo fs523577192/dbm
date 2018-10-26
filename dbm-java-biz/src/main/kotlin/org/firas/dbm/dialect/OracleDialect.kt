@@ -124,6 +124,38 @@ class OracleDialect: DbDialect() {
         )
     }
 
+    fun toSQL(indexAddition: IndexAddition): String {
+        val index = indexAddition.index
+        val table = index.table!!
+        val schema = table.schema
+        val quote = getNameQuote()
+        val name = if (null == index.name || "" == index.name) base64Time() else index.name
+        return "CREATE INDEX $quote${schema.name}$quote.$quote$name$quote ON " +
+                "$quote${schema.name}$quote.$quote${table.name} (" +
+                index.columnList.joinToString(transform = {
+                    it.column.name + if (null == it.length) " " else "(${it.length}) " +
+                            item.direction.toString()
+                }) + ")"
+    }
+
+    fun toSQL(indexDrop: IndexDrop): String {
+        val index = indexAddition.index
+        val table = index.table!!
+        val schema = table.schema
+        val quote = getNameQuote()
+        return "DROP INDEX $quote${schema.name}$quote.$quote${index.name}$quote"
+    }
+
+    private fun base64Time(): String {
+        var time = Date().getTime()
+        val array = ByteArray(8)
+        for (i in 0 .. 7) {
+            array[i] = time.and(0xFF).toByte()
+            time = time.shr(8)
+        }
+        return Base64.getUrlEncoder().encodeToString(array)
+    }
+
     override fun fetchInfo(schema: Schema, userName: String, password: String): Schema {
         var connection: Connection? = null
         try {

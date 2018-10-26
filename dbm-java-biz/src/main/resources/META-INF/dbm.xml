@@ -144,6 +144,12 @@
         <table name="info_index_column"/>
         <attributes>
             <embedded-id name="id"/>
+            <basic name="length">
+                <colum name="length"/>
+            </basic>
+            <basic name="direction">
+                <colum name="direction" length="4"/>
+            </basic>
             <many-to-one name="index" maps-id="indexId">
                 <join-column name="index_id" insertable="false" updatable="false"/>
             </many-to-one>

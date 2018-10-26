@@ -1,9 +1,8 @@
 package org.firas.dbm.dto
 
 /**
- * <b><code></code></b>
  * <p/>
- *
+ * 索引中的列
  * <p/>
  *
  * <b>Creation Time:</b> 2018年10月15日
@@ -13,5 +12,6 @@ package org.firas.dbm.dto
  * @since 1.0.0
  */
 class ColumnInIndexDTO(val indexId: String, val columnId: String,
-                       val ordinal: Int = 0, var length: Int? = null) {
+                       val ordinal: Int = 0, var length: Int? = null,
+                       val direction: SortDirection = SortDirection.ASC) {
 }

@@ -16,7 +16,8 @@ import java.util.*
  * @since 1.0.0
  */
 class ColumnInIndexPO(index: IndexPO? = null, column: ColumnPO? = null,
-                      var ordinal: Int = 0, var length: Int? = null) {
+                      var ordinal: Int = 0, var length: Int? = null,
+                      val direction: SortDirection = SortDirection.ASC) {
 
     var index: IndexPO? = index
         set(value) {
@@ -45,24 +46,26 @@ class ColumnInIndexPO(index: IndexPO? = null, column: ColumnPO? = null,
             IndexPO(columnInIndex.index),
             ColumnPO(columnInIndex.column),
             0,
-            columnInIndex.length
+            columnInIndex.length,
+            columnInIndex.direction
     )
 
     constructor(columnInIndex: ColumnInIndexDTO): this(
             ordinal = columnInIndex.ordinal,
-            length = columnInIndex.length
+            length = columnInIndex.length,
+            direction = columnInIndex.direction
     )
 
     fun toDTO(): ColumnInIndexDTO {
-        return ColumnInIndexDTO(index!!.recId!!, column!!.recId!!, ordinal)
+        return ColumnInIndexDTO(index!!.recId!!, column!!.recId!!, ordinal, direction)
     }
 
     fun toBO(table: Table?): ColumnInIndex {
-        return ColumnInIndex(index!!.toBO(table), column!!.toBO(table), length)
+        return ColumnInIndex(index!!.toBO(table), column!!.toBO(table), length, direction)
     }
 
     fun toBO(index: Index?): ColumnInIndex {
         val index = index ?: this.index!!.toBO()
-        return ColumnInIndex(index, this.column!!.toBO(index.table))
+        return ColumnInIndex(index, this.column!!.toBO(index.table, length, direction))
     }
 }

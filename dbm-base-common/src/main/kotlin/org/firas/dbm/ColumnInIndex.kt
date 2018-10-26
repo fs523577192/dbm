@@ -9,5 +9,5 @@ package org.firas.dbm.bo
  * @version 1.0.0
  * @since 1.0.0
  */
-class ColumnInIndex(val index: Index, val column: Column, val length: Int? = null) {
+class ColumnInIndex(val index: Index, val column: Column, val length: Int? = null, val direction: SortDirection = SortDirection.ASC) {
 }

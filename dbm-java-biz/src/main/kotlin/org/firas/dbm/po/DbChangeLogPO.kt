@@ -12,7 +12,7 @@ package org.firas.dbm.po
  * @version 1.0.0
  * @since 1.0.0
  */
-data class DbChangeLog(var id: String? = null,
-                       var type: String? = null,
-                       var content: String? = null) {
+data class DbChangeLogPO(var id: String? = null,
+                         var type: String? = null,
+                         var content: String? = null) {
 }

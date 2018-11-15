@@ -24,6 +24,7 @@ data class ColumnPO(var recId: String? = null,
                     var status: String? = null,
                     var name: String? = null,
                     var comment: String? = null,
+                    var ordinal: Int = 0,
                     var dbType: String? = null,
                     var nullable: Boolean? = null,
                     var defaultValue: String? = null,
@@ -31,22 +32,24 @@ data class ColumnPO(var recId: String? = null,
                     var createTime: Date? = null,
                     var table: TablePO? = null): PoBase<Column, ColumnDTO> {
 
-    constructor(column: ColumnDTO): this(
+    constructor(column: ColumnDTO, ordinal: Int = 0): this(
             column.recId,
             column.status,
             column.name,
             column.comment,
+            ordinal,
             column.dbType.toString(),
             column.nullable,
             column.defaultValue,
             column.onUpdateValue
     )
 
-    constructor(column: Column): this(
+    constructor(column: Column, ordinal: Int = 0): this(
             null,
             CommonStatus.NORMAL.toCode(),
             column.name,
             column.comment,
+            ordinal,
             column.dbType.toString(),
             column.nullable,
             column.defaultValue,

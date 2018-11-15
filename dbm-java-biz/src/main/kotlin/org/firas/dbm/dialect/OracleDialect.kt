@@ -9,10 +9,13 @@ import org.firas.dbm.bo.Schema
 import org.firas.dbm.bo.Table
 import org.firas.dbm.domain.ColumnComment
 import org.firas.dbm.domain.ColumnRename
+import org.firas.dbm.domain.IndexAddition
+import org.firas.dbm.domain.IndexDrop
 import org.firas.dbm.type.*
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
+import java.util.*
 
 /**
  * Oracle数据库方言
@@ -127,21 +130,21 @@ class OracleDialect: DbDialect() {
     fun toSQL(indexAddition: IndexAddition): String {
         val index = indexAddition.index
         val table = index.table!!
-        val schema = table.schema
+        val schema = table.schema!!
         val quote = getNameQuote()
         val name = if (null == index.name || "" == index.name) base64Time() else index.name
         return "CREATE INDEX $quote${schema.name}$quote.$quote$name$quote ON " +
                 "$quote${schema.name}$quote.$quote${table.name} (" +
-                index.columnList.joinToString(transform = {
+                index.columnList!!.joinToString(transform = {
                     it.column.name + if (null == it.length) " " else "(${it.length}) " +
-                            item.direction.toString()
+                            it.direction.toString()
                 }) + ")"
     }
 
     fun toSQL(indexDrop: IndexDrop): String {
-        val index = indexAddition.index
+        val index = indexDrop.index
         val table = index.table!!
-        val schema = table.schema
+        val schema = table.schema!!
         val quote = getNameQuote()
         return "DROP INDEX $quote${schema.name}$quote.$quote${index.name}$quote"
     }

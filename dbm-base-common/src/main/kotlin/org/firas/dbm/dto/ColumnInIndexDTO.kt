@@ -1,5 +1,7 @@
 package org.firas.dbm.dto
 
+import org.firas.dbm.bo.SortDirection
+
 /**
  * <p/>
  * 索引中的列
@@ -14,4 +16,5 @@ package org.firas.dbm.dto
 class ColumnInIndexDTO(val indexId: String, val columnId: String,
                        val ordinal: Int = 0, var length: Int? = null,
                        val direction: SortDirection = SortDirection.ASC) {
+    var columnName: String? = null
 }

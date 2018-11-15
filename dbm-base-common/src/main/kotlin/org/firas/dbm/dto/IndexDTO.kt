@@ -20,4 +20,5 @@ class IndexDTO(val recId: String? = null,
                val type: IndexType,
                val name: String?,
                val tableId: String? = null) {
+    var columns: MutableList<ColumnInIndexDTO>? = null
 }

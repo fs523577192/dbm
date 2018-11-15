@@ -1,11 +1,14 @@
 package org.firas.dbm.service.impl
 
 import org.firas.common.bo.CommonStatus
+import org.firas.common.util.getUuidAsHexString
 import org.firas.dbm.dao.ColumnDAO
 import org.firas.dbm.dto.ColumnDTO
 import org.firas.dbm.exception.EntityNotExistException
+import org.firas.dbm.po.ColumnPO
 import org.firas.dbm.po.TablePO
 import org.firas.dbm.service.ColumnManager
+import java.util.*
 
 /**
  * <b><code></code></b>
@@ -34,7 +37,17 @@ open class ColumnManagerImpl: ColumnManager {
     }
 
     override fun create(input: Iterable<ColumnDTO>): List<ColumnDTO> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val now = Date()
+        val result = ArrayList<ColumnDTO>()
+        columnDAO!!.saveAll(input.mapIndexed { index, columnDTO ->
+            val columnPO = ColumnPO(columnDTO, index + 1)
+            columnPO.recId = getUuidAsHexString()
+            columnPO.createTime = now
+            columnPO.table = TablePO(columnDTO.tableId)
+            result.add(columnPO.toDTO())
+            columnPO
+        })
+        return result
     }
 
     override fun update(input: ColumnDTO) {

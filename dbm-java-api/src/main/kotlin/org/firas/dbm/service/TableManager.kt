@@ -1,5 +1,7 @@
 package org.firas.dbm.service
 
+import org.firas.dbm.dto.ColumnDTO
+import org.firas.dbm.dto.IndexDTO
 import org.firas.dbm.dto.TableDTO
 
 /**
@@ -20,7 +22,9 @@ interface TableManager {
 
     fun findBySchema(schemaId: String): List<TableDTO>
 
-    fun create(input: TableDTO): TableDTO
+    fun create(tableDTO: TableDTO, columnList: List<ColumnDTO>,
+               indexes: Iterable<IndexDTO>):
+            Triple<TableDTO, List<ColumnDTO>, Iterable<IndexDTO>>
 
     fun update(input: TableDTO)
 

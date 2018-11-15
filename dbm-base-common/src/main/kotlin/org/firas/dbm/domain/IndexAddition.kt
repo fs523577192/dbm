@@ -13,5 +13,5 @@ import org.firas.dbm.bo.Index
  * @version 1.0.0
  * @since 1.0.0
  */
-class IndexAddition(index: Index) {
+class IndexAddition(val index: Index) {
 }

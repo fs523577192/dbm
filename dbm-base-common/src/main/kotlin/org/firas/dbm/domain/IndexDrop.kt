@@ -13,5 +13,5 @@ import org.firas.dbm.bo.Index
  * @version 1.0.0
  * @since 1.0.0
  */
-class IndexDrop(index: Index) {
+class IndexDrop(val index: Index) {
 }

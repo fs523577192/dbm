@@ -1,11 +1,14 @@
 package org.firas.dbm.service.impl
 
 import org.firas.common.bo.CommonStatus
+import org.firas.common.util.getUuidAsHexString
 import org.firas.dbm.dao.IndexDAO
 import org.firas.dbm.dto.IndexDTO
 import org.firas.dbm.exception.EntityNotExistException
+import org.firas.dbm.po.IndexPO
 import org.firas.dbm.po.TablePO
 import org.firas.dbm.service.IndexManager
+import java.util.*
 
 /**
  * <b><code></code></b>
@@ -34,7 +37,17 @@ open class IndexManagerImpl: IndexManager {
     }
 
     override fun create(input: Iterable<IndexDTO>): List<IndexDTO> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val now = Date()
+        val result = ArrayList<IndexDTO>()
+        indexDAO!!.saveAll(input.map {
+            val indexPO = IndexPO(it)
+            indexPO.recId = getUuidAsHexString()
+            indexPO.createTime = now
+            indexPO.table = TablePO(it.tableId)
+            result.add(indexPO.toDTO())
+            indexPO
+        })
+        return result
     }
 
     override fun update(input: IndexDTO) {

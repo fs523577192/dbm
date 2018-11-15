@@ -15,5 +15,6 @@ package org.firas.dbm.bo
 enum class IndexType {
     PRIMARY,
     UNIQUE,
-    NORMAL
+    NORMAL,
+    FULLTEXT
 }

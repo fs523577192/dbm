@@ -9,6 +9,6 @@ package org.firas.dbm.bo
  * @version 1.0.0
  * @since 1.0.0
  */
-enum SortDirection {
+enum class SortDirection {
     ASC, DESC
 }

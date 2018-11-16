@@ -2,13 +2,17 @@ package org.firas.dbm.service.impl
 
 import org.firas.common.bo.CommonStatus
 import org.firas.common.util.getUuidAsHexString
+import org.firas.dbm.dao.ColumnInIndexDAO
 import org.firas.dbm.dao.IndexDAO
+import org.firas.dbm.dto.ColumnInIndexDTO
 import org.firas.dbm.dto.IndexDTO
 import org.firas.dbm.exception.EntityNotExistException
+import org.firas.dbm.po.ColumnInIndexPO
 import org.firas.dbm.po.IndexPO
 import org.firas.dbm.po.TablePO
 import org.firas.dbm.service.IndexManager
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * <b><code></code></b>
@@ -50,6 +54,25 @@ open class IndexManagerImpl: IndexManager {
         return result
     }
 
+    override fun create(input: IndexDTO): IndexDTO {
+        val now = Date()
+        val indexPO = IndexPO(input)
+        indexPO.recId = getUuidAsHexString()
+        indexPO.createTime = now
+        indexPO.table = TablePO(input.tableId)
+        val result = indexDAO!!.save(indexPO).toDTO()
+
+        result.columns = ArrayList()
+        input.columns?.forEach { column ->
+            val toSave = ColumnInIndexDTO(result.recId!!, column.columnId,
+                    column.ordinal, column.length, column.direction)
+            result.columns!!.add(toSave)
+        }
+        result.columns = columnInIndexDAO!!.saveAll(result.columns!!.map { ColumnInIndexPO(it) })
+                .mapTo(ArrayList()) { it.toDTO() }
+        return result
+    }
+
     override fun update(input: IndexDTO) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -65,4 +88,5 @@ open class IndexManagerImpl: IndexManager {
     }
 
     var indexDAO: IndexDAO? = null
+    var columnInIndexDAO: ColumnInIndexDAO? = null
 }

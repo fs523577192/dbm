@@ -22,6 +22,8 @@ interface IndexManager {
 
     fun create(input: Iterable<IndexDTO>): List<IndexDTO>
 
+    fun create(input: IndexDTO): IndexDTO
+
     fun update(input: IndexDTO)
 
     fun remove(id: String)
